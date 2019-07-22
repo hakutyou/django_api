@@ -1,0 +1,13 @@
+cos-python-sdk-v5
+Django
+djangorestframework
+djangorestframework-simplejwt
+django-cors-middleware
+gunicorn
+gevent
+tornado
+PyJWT
+mysqlclient
+redis
+django-mongolog
+django_redis

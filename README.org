@@ -1,0 +1,11 @@
+#+TITLE: Django API
+#+AUTHOR: 白鳥鵠
+#+DATE: 2019-07-22
+
+* Pycharm 环境
+#+BEGIN_SRC bash
+PYTHONUNBUFFERED=1
+DJANGO_SETTINGS_MODULE=api.settings
+DEBUG=1
+#+END_SRC
+
