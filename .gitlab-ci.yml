@@ -1,0 +1,10 @@
+image: "hakutyou/ubuntu:tuna"
+
+before_script:
+  - echo "准备"
+
+deploy_master:
+  stage: deploy
+  script:
+  - echo "deploy"
+
