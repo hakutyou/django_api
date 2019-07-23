@@ -4,7 +4,7 @@ import re
 
 import requests
 
-from .controller import wuxia
+from .controller import command
 from .models import CoolqReply
 
 admin_qq = [
@@ -83,7 +83,7 @@ def qchat_group(post, self_id):
                          headers=headers)
         return Response()
 
-    if group_id in receive_group:
+    if (sub_type == 'normal') and (group_id in receive_group):
         notice_checkout = re.match(r'^\[CQ:rich.*$', message)
         if notice_checkout:
             notice = re.match(r'^.*text":"(?P<text>.+?)".*$', message)  # 群公告
@@ -94,8 +94,13 @@ def qchat_group(post, self_id):
             requests.get(f'https://coolq.emilia.fun/send_group_msg?group_id=792626419&message={text}', headers=headers)
             # 百香果双响炮
             requests.get(f'https://coolq.emilia.fun/send_group_msg?group_id=737855501&message={text}', headers=headers)
-            return Response()
+        # return Response()
 
+    # 无视的群
+    if group_id not in whitelist_group:
+        return Response()
+
+    # 正常发言的群
     return sub_type_map[sub_type](post, self_id)
 
 
@@ -122,62 +127,25 @@ def qchat_private(post, self_id):
 
 # 0.0.0 普通群消息
 def qchat_gnormal(post, self_id):  # 群消息
-    user_id = post.get('user_id')  # 发送者 QQ 号
+    user_id = post.get('user_id')  # QQ 号
     message = post.get('message')  # 消息内容
     group_id = post.get('group_id')  # 群号
-    _sender = post.get('sender')  # 发送人信息
-    nickname = _sender.get('nickname')
-    card = _sender.get('card')
-    sex = _sender.get('sex')
-    age = _sender.get('age')
-    area = _sender.get('area')
-    level = _sender.get('level')
-    role = _sender.get('role')
-    title = _sender.get('title')
 
-    # 无视的群
-    if group_id not in whitelist_group:
-        return Response()
-
-    # 正常发言的群
     if user_id in admin_qq:
         pass
 
-    # userinfo
-    if message == '/userinfo':
-        reply = ''
-        for i in ['user_id', 'nickname', 'card', 'sex', 'age', 'area', 'level', 'role', 'title']:
-            reply += f'{i}: {locals()[i]}\n'
-        return Response(reply=reply)
+    if message[0] == '/':
+        # 直接匹配
+        m = re.match('^/(?P<command>[a-z]+?)$', message)
+        if m in command.COMMAND_LIST['0']:
+            return Response(reply=command.COMMAND_LIST['0'][m](post, self_id))
+        # 带参匹配
+        m = re.match('^/(?P<command>[a-z]+)(?P<flag>[^a-z])(.+?)((?P=flag)(?P<arg>.+?))*$', message)
+        argc = len(m.groups()) - 2
+        if m in command.COMMAND_LIST[str(argc)]:
+            return Response(command.COMMAND_LIST[str(argc)][m](post, self_id, m.groups()[2:]))
+        return Response()
 
-    # role search
-    m = re.match('^/role(?P<flag>.)(?P<qq_number>[0-9]+)(?P=flag)(?P<zone>.+)', message)
-    if m:
-        qq_number = m.group('qq_number')
-        zone = m.group('zone')
-        return Response(reply=wuxia.get_wuxia_role(qq_number, zone, self_id))
-
-    # forget
-    m = re.match(r'^/forget.(?P<input>.+)$', message)
-    if m:
-        pattern = m.group('input')
-        cr = CoolqReply.objects.filter(pattern=pattern, group_id=group_id, status=True).first()
-        if cr:
-            if (int(cr.create_qq) != int(user_id)) and (role == 'member'):
-                return Response(reply=f'只能由创建者[CQ:at,qq={cr.create_qq}]或者管理员删除')
-            cr.status = False
-            cr.save()
-            return Response(reply=f'成功: {pattern}')
-
-    # learn
-    m = re.match(r'^/learn(?P<flag>.)(?P<input>.+)(?P=flag)(?P<reply>.+)$', message)
-    if m:
-        pattern = m.group('input')
-        reply = m.group('reply')
-        if CoolqReply.objects.filter(pattern=pattern, group_id=group_id, status=True):
-            return Response(f'失败 {pattern} 已使用')
-        CoolqReply.objects.create(pattern=pattern, reply=reply, create_qq=user_id, group_id=group_id)
-        return Response(reply=f'成功: {pattern}, {reply}')
     try_no_regex = CoolqReply.objects.filter(pattern=message, group_id=group_id, regex=False, status=True).first()
     if try_no_regex:
         return Response(reply=try_no_regex.reply)
