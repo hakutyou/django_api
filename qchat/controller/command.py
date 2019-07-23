@@ -2,7 +2,7 @@ from qchat.models import CoolqReply
 from . import wuxia
 
 
-def userinfo(post, self_id):
+def userinfo(post, self_id, _):
     user_id = post.get('user_id')  # QQ 号
     message = post.get('message')  # 消息内容
     group_id = post.get('group_id')  # 群号
