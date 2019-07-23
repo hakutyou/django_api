@@ -138,12 +138,14 @@ def qchat_gnormal(post, self_id):  # 群消息
         # 直接匹配
         m = re.match('^/(?P<command>[a-z]+?)$', message)
         if m in command.COMMAND_LIST['0']:
-            return Response(reply=command.COMMAND_LIST['0'][m](post, self_id))
+            _command = m.group('command')
+            return Response(reply=command.COMMAND_LIST['0'][_command](post, self_id))
         # 带参匹配
         m = re.match('^/(?P<command>[a-z]+)(?P<flag>[^a-z])(.+?)((?P=flag)(?P<arg>.+?))*$', message)
         argc = len(m.groups()) - 2
         if m in command.COMMAND_LIST[str(argc)]:
-            return Response(command.COMMAND_LIST[str(argc)][m](post, self_id, m.groups()[2:]))
+            _command = m.group('command')
+            return Response(command.COMMAND_LIST[str(argc)][_command](post, self_id, m.groups()[2:]))
         return Response()
 
     try_no_regex = CoolqReply.objects.filter(pattern=message, group_id=group_id, regex=False, status=True).first()
