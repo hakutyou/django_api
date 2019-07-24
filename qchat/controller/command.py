@@ -36,11 +36,10 @@ def forget(post, _, args):
     user_id = post.get('user_id')
     group_id = post.get('group_id')
     pattern = args[0]
-    try:
-        from_title = args[1]
-    except IndexError:
-        from_title = None
-    cr = CoolqReply.objects.filter(pattern=pattern, group_id=group_id, status=True, from_title=from_title).first()
+    from_title = qchat.title_group.get(str(group_id))
+    cr = CoolqReply.objects.filter(
+        pattern=pattern, group_id=group_id,
+        status=True, from_title=from_title).first()
     if cr:
         if (int(cr.create_qq) != int(user_id)) and (role == 'member'):
             return f'只能由创建者[CQ:at,qq={cr.create_qq}]或者管理员删除'
