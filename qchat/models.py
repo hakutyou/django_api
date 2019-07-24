@@ -11,6 +11,9 @@ class CoolqReply(models.Model):
     status = models.BooleanField('是否开启', default=True)
     regex = models.BooleanField('正则', default=False)
 
+    from_title = models.CharField('需要话题', max_length=128, default=None, null=True, db_index=True)
+    to_title = models.CharField('进入话题', max_length=128, default=None, null=True)
+
     class Meta:
         db_table = 'coolq_reply'
         verbose_name = '回复库'
