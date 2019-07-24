@@ -1,3 +1,4 @@
+from qchat import qchat
 from qchat.models import CoolqReply
 from . import wuxia
 
@@ -58,38 +59,18 @@ def learn(post, _, args):
     pattern = args[0]
     reply = args[1]
     try:
-        from_title = args[2]
+        to_title = args[2]
     except IndexError:
-        from_title = None
+        to_title = None
+    from_title = qchat.title_group.get(str(group_id))
     if CoolqReply.objects.filter(pattern=pattern, group_id=group_id, status=True,
-                                 from_title=None, to_title=from_title):
+                                 from_title=from_title, to_title=to_title):
         return f'失败 {pattern} 已使用'
     CoolqReply.objects.create(pattern=pattern, reply=reply, create_qq=user_id, group_id=group_id,
-                              from_title=None, to_title=from_title)
+                              from_title=from_title, to_title=to_title)
     ret = f'成功: {pattern}, {reply}'
-    if from_title is not None:
-        ret += f'({from_title})'
-    return ret
-
-
-def learnt(post, _, args):
-    user_id = post.get('user_id')
-    group_id = post.get('group_id')
-    title = args[0]
-    pattern = args[1]
-    reply = args[2]
-    try:
-        from_title = args[3]
-    except IndexError:
-        from_title = None
-    if CoolqReply.objects.filter(pattern=pattern, group_id=group_id, status=True,
-                                 from_title=title, to_title=from_title):
-        return f'失败 {pattern} 已使用'
-    CoolqReply.objects.create(pattern=pattern, reply=reply, create_qq=user_id, group_id=group_id,
-                              from_title=from_title, to_title=from_title)
-    ret = f'成功: {pattern}, {reply}'
-    if from_title is not None:
-        ret += f'({from_title})'
+    if to_title is not None:
+        ret += f'({to_title})'
     return ret
 
 
@@ -106,9 +87,5 @@ COMMAND_LIST = {
     },
     '3': {
         'learn': learn,
-        'learnt': learnt,
-    },
-    '4': {
-        'learnt': learnt,
     },
 }

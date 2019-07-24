@@ -159,6 +159,7 @@ def qchat_gnormal(post, self_id):  # 群消息
         title_group[str(group_id)] = try_no_regex.to_title
         return Response(reply=try_no_regex.reply)
     if message[0] == '#':
+        title_group[str(group_id)] = None
         return Response(reply=message[1:])
     return Response()
 
