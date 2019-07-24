@@ -24,6 +24,9 @@ receive_group = [
     205375321,  # 天刀体服航海玩家群
 ]
 
+title_group = {
+}
+
 headers = {'Authorization': 'Bearer Lihu4hA49kUtYou'}
 
 
@@ -148,8 +151,12 @@ def qchat_gnormal(post, self_id):  # 群消息
                 return Response(command.COMMAND_LIST[str(argc)][_command](post, self_id, _args))
         return Response()
 
-    try_no_regex = CoolqReply.objects.filter(pattern=message, group_id=group_id, regex=False, status=True).first()
+    title = title_group.get(str(group_id))
+    try_no_regex = CoolqReply.objects.filter(
+        pattern=message, group_id=group_id,
+        regex=False, status=True, from_title=title).first()
     if try_no_regex:
+        title_group[str(group_id)] = try_no_regex.to_title
         return Response(reply=try_no_regex.reply)
     if message[0] == '#':
         return Response(reply=message[1:])
