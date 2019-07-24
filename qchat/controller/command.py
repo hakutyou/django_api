@@ -22,6 +22,14 @@ def userinfo(post, self_id, _):
     return reply
 
 
+def state(post, _, _1):
+    group_id = post.get('group_id')
+    from_title = qchat.title_group.get(str(group_id))
+    if not from_title:
+        return '当前处于主状态'
+    return f'当前状态{from_title}'
+
+
 def role(_, self_id, args):
     # m = re.match('^/role(?P<flag>.)(?P<qq_number>[0-9]+)(?P=flag)(?P<zone>.+)', message)
     try:
@@ -76,6 +84,7 @@ def learn(post, _, args):
 COMMAND_LIST = {
     '0': {
         'userinfo': userinfo,
+        'state': state,
     },
     '1': {
         'forget': forget,
