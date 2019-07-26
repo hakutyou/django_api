@@ -27,7 +27,7 @@ def state(post, _, _1):
     from_title = qchat.title_group.get(str(group_id))
     if not from_title:
         return '当前处于主状态'
-    return f'当前状态{from_title}'
+    return f'当前状态: {from_title}'
 
 
 def role(_, self_id, args):

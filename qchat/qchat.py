@@ -89,8 +89,11 @@ def qchat_group(post, self_id):
     if (sub_type == 'normal') and (group_id in receive_group):
         notice_checkout = re.match(r'^\[CQ:rich.*$', message)
         if notice_checkout:
-            notice = re.match(r'^.*text":"(?P<text>.+?)".*$', message)  # 群公告
+            notice = re.match(r'^.*title=(?P<title>.+?),.*text":"(?P<text>.+?)".*$', message)  # 群公告
+            title = base64.b64decode(notice.group('title')).decode('utf-8')
             text = base64.b64decode(notice.group('text')).decode('utf-8')
+            if title != '群公告':
+                text = title + '\n' + text
             # 测试
             requests.get(f'https://coolq.emilia.fun/send_group_msg?group_id=164730098&message={text}', headers=headers)
             # Secret base
