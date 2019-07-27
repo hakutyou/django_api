@@ -25,10 +25,10 @@ def userinfo(post, self_id, _):
 
 def state(post, _, _1):
     group_id = post.get('group_id')
-    from_title = qchat.title_group.get(str(group_id))
-    if not from_title:
-        return '当前处于主状态'
-    return f'当前状态: {from_title}'
+    from_title = qchat.title_group.get(str(group_id), qchat.default_title)
+    if from_title:
+        return f'当前状态: {from_title}'
+    return None
 
 
 def role(_, self_id, args):
