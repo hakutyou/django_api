@@ -16,3 +16,10 @@ def get_time(utc_time, format='%Y-%m-%d %H:%M:%S', hours=8):
     tzutc_8 = datetime.timezone(datetime.timedelta(hours=hours))
     local_dt = utc_time.astimezone(tzutc_8).strftime(format)
     return local_dt
+
+
+def list_get(lst, idx, default=None):
+    try:
+        return lst[idx]
+    except IndexError:
+        return default

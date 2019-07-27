@@ -26,6 +26,7 @@ receive_group = [
 
 title_group = {
 }
+default_title = 'Main'  # 默认的主模式
 
 headers = {'Authorization': 'Bearer Lihu4hA49kUtYou'}
 
@@ -154,7 +155,7 @@ def qchat_gnormal(post, self_id):  # 群消息
                 return Response(command.COMMAND_LIST[str(argc)][_command](post, self_id, _args))
         return Response()
 
-    title = title_group.get(str(group_id))
+    title = title_group.get(str(group_id), default_title)
     try_no_regex = CoolqReply.objects.filter(
         pattern=message, group_id=group_id,
         regex=False, status=True, from_title=title).first()
@@ -162,7 +163,7 @@ def qchat_gnormal(post, self_id):  # 群消息
         title_group[str(group_id)] = try_no_regex.to_title
         return Response(reply=try_no_regex.reply)
     if message[0] == '#':
-        title_group[str(group_id)] = None
+        title_group[str(group_id)] = 'Main'
         return Response(reply=message[1:])
     return Response()
 

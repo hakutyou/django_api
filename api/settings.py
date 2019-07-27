@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import datetime
 import os
 
+from decouple import config
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -23,10 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'u*pc@ipsx3g=+1c3m)da9s&+$e_+9a$&o+-@x9ne^%^71qmk%%'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-if os.environ.get('DEBUG'):
-    DEBUG = True
-else:
-    DEBUG = False
+DEBUG = config('DEBUG')
 
 # 0. 基本配置
 ALLOWED_HOSTS = ['*']  # 允许访问的 IP
@@ -102,7 +101,7 @@ LOGGING = {
             'level': 'DEBUG'
         },
         'api': {  # 项目内的 logger.info
-            'handlers': ['console'],    # ['mongolog'],
+            'handlers': ['console'],  # ['mongolog'],
             'propagate': False,
             'level': 'INFO',
         }
@@ -166,23 +165,23 @@ LOGGING = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'api',
-        'USER': 'api',
-        'PASSWORD': '1iann',
-        'HOST': '172.18.0.101',
-        'PORT': 3306,
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT'),
         'OPTIONS': {
             'charset': 'utf8mb4',
         },
     }
 }
-if DEBUG:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        }
-    }
+# if DEBUG:
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.sqlite3',
+#             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#         }
+#     }
 
 # 7. 缓存配置
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
@@ -200,14 +199,14 @@ CACHES = {
 }
 
 # 8. 邮件配置
-EMAIL_USE_SSL = True
-EMAIL_HOST = 'smtp.emilia.fun'
-EMAIL_PORT = 465
-EMAIL_HOST_USER = 'api@emilia.fun'
-EMAIL_HOST_PASSWORD = '1iann'
+EMAIL_USE_SSL = config('EMAIL_USE_SSL')
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_PORT = config('EMAIL_PORT')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 # Default Receiver List
-EMAIL_RECEIVER = ['lihu@emilia.fun']
+EMAIL_RECEIVER = [config('EMAIL_RECEIVER')]
 # Add mail user
 # insert into users(email, password) values \
 # ('api@emilia.fun', ENCRYPT('1iann', \

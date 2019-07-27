@@ -9,12 +9,26 @@ class CoolqReply(models.Model):
     create_qq = models.CharField('创建者', max_length=15)
     group_id = models.IntegerField('回复QQ群')
     status = models.BooleanField('是否开启', default=True)
-    regex = models.BooleanField('正则', default=False)
+    # 默认延迟 200 毫秒后回复
+    delay = models.IntegerField('延迟回复', default=200)
 
-    from_title = models.CharField('需要话题', max_length=128, default=None, null=True, db_index=True)
-    to_title = models.CharField('进入话题', max_length=128, default=None, null=True)
+    from_title = models.ForeignKey(
+        'qchat.CoolqSubject', verbose_name='需要话题', related_name='to_reply',
+        on_delete=models.CASCADE, null=True)
+    to_title = models.ForeignKey(
+        'qchat.CoolqSubject', verbose_name='进入话题', related_name='from_reply',
+        on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'coolq_reply'
         verbose_name = '回复库'
+        verbose_name_plural = verbose_name
+
+
+class CoolqSubject(models.Model):
+    subject = models.CharField('主题名称', max_length=64, db_index=True)
+
+    class Meta:
+        db_table = 'coolq_subject'
+        verbose_name = '回复状态库'
         verbose_name_plural = verbose_name

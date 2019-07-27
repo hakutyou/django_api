@@ -2,10 +2,29 @@
 #+AUTHOR: 白鳥鵠
 #+DATE: 2019-07-22
 
-* Pycharm 环境
+* QuickStart
+** Local Environment
 #+BEGIN_SRC bash
-PYTHONUNBUFFERED=1
-DJANGO_SETTINGS_MODULE=api.settings
-DEBUG=1
+cp script/debug.env .env
+# virtualenv --no-site-packages venv
+# source venv/bin/activate
+pip install -r requirements.txt
+python manage.py
 #+END_SRC
 
+** Server Environment
+#+BEGIN_SRC bash
+cp script/product .env
+#+END_SRC
+
+
+* Dependence
+** Mariadb
+#+BEGIN_SRC mysql
+create database api default character set utf8mb4 collate utf8mb4_unicode_ci;
+#+END_SRC
+
+PyCharm 无法连接尝试使用以下 URL 确定时区信息
+#+BEGIN_EXAMPLE
+jdbc:mysql://localhost:3306/api?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+#+END_EXAMPLE
