@@ -14,7 +14,7 @@ python manage.py
 
 ** Server Environment
 #+BEGIN_SRC bash
-cp script/product .env
+cp script/product.env .env
 #+END_SRC
 
 

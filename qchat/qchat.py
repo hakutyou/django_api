@@ -5,7 +5,7 @@ import re
 import requests
 
 from .controller import command
-from .models import CoolqReply
+from .models import CoolqReply, CoolqSubject
 
 admin_qq = [
     2295122015,
@@ -156,12 +156,15 @@ def qchat_gnormal(post, self_id):  # 群消息
         return Response()
 
     title = title_group.get(str(group_id), default_title)
-    try_no_regex = CoolqReply.objects.filter(
-        pattern=message, group_id=group_id,
-        regex=False, status=True, from_title=title).first()
-    if try_no_regex:
-        title_group[str(group_id)] = try_no_regex.to_title
-        return Response(reply=try_no_regex.reply)
+
+    coolq_subject = CoolqSubject.objects.filter(subject=title).first()
+    if coolq_subject:
+        try_no_regex = CoolqReply.objects.filter(
+            pattern=message, group_id=group_id,
+            regex=False, status=True, from_title=coolq_subject).first()
+        if try_no_regex:
+            title_group[str(group_id)] = try_no_regex.to_title
+            return Response(reply=try_no_regex.reply)
     if message[0] == '#':
         title_group[str(group_id)] = 'Main'
         return Response(reply=message[1:])

@@ -84,7 +84,7 @@ def learn(post, _, args):
         coolq_to_subject = CoolqSubject.objects.create(subject=to_title)
 
     if CoolqReply.objects.filter(pattern=pattern, group_id=group_id, status=True,
-                                 from_title=coolq_subject, to_title=coolq_to_subject):
+                                 from_title=coolq_subject):
         return f'失败 {pattern} 已使用'
     CoolqReply.objects.create(pattern=pattern, reply=reply, create_qq=user_id, group_id=group_id,
                               from_title=coolq_subject, to_title=coolq_to_subject)
