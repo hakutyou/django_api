@@ -74,14 +74,13 @@ def learn(post, _, args):
     reply = args[1]
 
     if command == 'learn*':
-        from_title = None
+        coolq_subject = None
     else:
         from_title = qchat.title_group.get(str(group_id), qchat.default_title)
+        coolq_subject = CoolqSubject.objects.filter(subject=from_title).first() or \
+                        CoolqSubject.objects.create(subject=from_title)
+
     to_title = list_get(args, 2, qchat.default_title)
-
-    coolq_subject = CoolqSubject.objects.filter(subject=from_title).first() or \
-                    CoolqSubject.objects.create(subject=from_title)
-
     coolq_to_subject = CoolqSubject.objects.filter(subject=to_title).first() or \
                        CoolqSubject.objects.create(subject=to_title)
 
