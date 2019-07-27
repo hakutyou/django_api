@@ -142,8 +142,9 @@ def qchat_gnormal(post, self_id):  # 群消息
     if user_id in admin_qq:
         pass
 
+    # Command Mode
     if message[0] == '/':
-        m = re.match('^/(?P<command>[a-z]+?)(?:(?P<flag>[^a-z])(?P<args>.+?))?$', message)
+        m = re.match('^/(?P<command>[a-z*\-]+?)(?:(?P<flag>[^a-z*\-])(?P<args>.+?))?$', message)
         if m:
             _command = m.group('command')
             _flag = m.group('flag')
@@ -153,23 +154,28 @@ def qchat_gnormal(post, self_id):  # 群消息
                 _args = []
             argc = len(_args)
             if _command in command.COMMAND_LIST[str(argc)]:
+                post['command'] = _command
                 return Response(command.COMMAND_LIST[str(argc)][_command](post, self_id, _args))
         return Response()
 
-    title = title_group.get(str(group_id), default_title)
-
-    coolq_subject = CoolqSubject.objects.filter(subject=title).first()
-    if coolq_subject:
-        try_no_regex = CoolqReply.objects.filter(
-            pattern=message, group_id=group_id,
-            status=True, from_title=coolq_subject).first()
-        if try_no_regex:
-            title_group[str(group_id)] = try_no_regex.to_title
-            time.sleep(int(try_no_regex.delay) / 1000)
-            return Response(reply=try_no_regex.reply)
+    # Reset Mode
     if message[0] == '#':
         title_group[str(group_id)] = 'Main'
         return Response(reply=message[1:])
+
+    # Normal Mode
+    title = title_group.get(str(group_id), default_title)
+    coolq_subject = CoolqSubject.objects.filter(subject=title).first() or \
+                    CoolqSubject.objects.create(subject=title)
+
+    reply = CoolqReply.objects.filter(pattern=message, group_id=group_id, status=True)
+    reply = reply.filter(from_title=coolq_subject).first() or \
+            reply.filter(from_title=None).first()
+
+    if reply:
+        time.sleep(int(reply.delay) / 1000)
+        title_group[str(group_id)] = reply.to_title
+        return Response(reply=reply.reply)
     return Response()
 
 

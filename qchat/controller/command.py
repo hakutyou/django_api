@@ -51,14 +51,14 @@ def forget(post, _, args):
     if not coolq_subject:
         return None
 
-    cr = CoolqReply.objects.filter(
-        pattern=pattern, group_id=group_id,
-        status=True, from_title=coolq_subject).first()
+    cr = CoolqReply.objects.filter(pattern=pattern, group_id=group_id, status=True)
+    cr = cr.filter(from_title=coolq_subject).first() or \
+         cr.filter(from_title=None).first()
+
     if cr:
         if (int(cr.create_qq) != int(user_id)) and (role == 'member'):
             return f'只能由创建者[CQ:at,qq={cr.create_qq}]或者管理员删除'
-        # 真实删除
-        cr.delete()
+        cr.delete()  # 真实删除
         ret = f'成功: {pattern}'
         if from_title is not None:
             ret += f'({from_title})'
@@ -67,25 +67,28 @@ def forget(post, _, args):
 
 
 def learn(post, _, args):
+    command = post.get('command')
     user_id = post.get('user_id')
     group_id = post.get('group_id')
     pattern = args[0]
     reply = args[1]
 
-    from_title = qchat.title_group.get(str(group_id), qchat.default_title)
+    if command == 'learn*':
+        from_title = None
+    else:
+        from_title = qchat.title_group.get(str(group_id), qchat.default_title)
     to_title = list_get(args, 2, qchat.default_title)
 
-    coolq_subject = CoolqSubject.objects.filter(subject=from_title).first()
-    if not coolq_subject:
-        coolq_subject = CoolqSubject.objects.create(subject=from_title)
+    coolq_subject = CoolqSubject.objects.filter(subject=from_title).first() or \
+                    CoolqSubject.objects.create(subject=from_title)
 
-    coolq_to_subject = CoolqSubject.objects.filter(subject=to_title).first()
-    if not coolq_to_subject:
-        coolq_to_subject = CoolqSubject.objects.create(subject=to_title)
+    coolq_to_subject = CoolqSubject.objects.filter(subject=to_title).first() or \
+                       CoolqSubject.objects.create(subject=to_title)
 
     if CoolqReply.objects.filter(pattern=pattern, group_id=group_id, status=True,
                                  from_title=coolq_subject):
         return f'失败 {pattern} 已使用'
+
     CoolqReply.objects.create(pattern=pattern, reply=reply, create_qq=user_id, group_id=group_id,
                               from_title=coolq_subject, to_title=coolq_to_subject)
     ret = f'成功: {pattern}, {reply}'
@@ -105,8 +108,10 @@ COMMAND_LIST = {
     '2': {
         'role': role,
         'learn': learn,
+        'learn*': learn,
     },
     '3': {
         'learn': learn,
+        'learn*': learn,
     },
 }
