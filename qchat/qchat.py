@@ -96,6 +96,25 @@ def qchat_group(post, self_id):
             text = base64.b64decode(notice.group('text')).decode('utf-8')
             if title != '群公告':
                 text = title + '\n' + text
+
+            for i in ['【', '】', '天刀', '体服', '航海', '玩家', '群', '205375321']:
+                text = text.replace(i, '')
+            # TYPE = {
+            #     '绸伞': ['伞'],
+            #     '龙涎香': ['龙'],
+            #     '石棉': ['石棉', '失眠'],
+            #     '': ['瓶', '瓷'],
+            #     '铜镜': ['镜'],
+            #     '铁弩': ['弩'],
+            #     '水仙花': ['水仙'],
+            #     '茶饼': ['茶饼'],
+            #     '藏书': ['藏书'],
+            #     '七宝镯': ['七宝'],
+            #     '无名藏锋剑': ['剑', '大保健'],
+            #     '醉蟹钳': ['蟹'],
+            #     '犀牛角': ['犀']
+            # }
+
             # 测试
             requests.get(f'https://coolq.emilia.fun/send_group_msg?group_id=164730098&message={text}', headers=headers)
             # Secret base
