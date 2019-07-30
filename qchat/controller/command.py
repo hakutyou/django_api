@@ -1,3 +1,6 @@
+import re
+
+from external.package import baidu
 from qchat import qchat
 from qchat.models import CoolqReply, CoolqSubject
 from utils.utils import list_get
@@ -96,6 +99,19 @@ def learn(post, _, args):
     return ret
 
 
+def image(_, _1, args):
+    picture_url = args[0]
+    m = re.match(r'^\[CQ:image,file=(?P<file>.+),url=(?P<url>.+)\]$', picture_url)
+    if not m:
+        return None
+    url = m.group('url')
+    result = baidu.image_detect(url)['result']
+    ret = ''
+    for i in result:
+        ret += f'猜测结果: {i["root"]}, 确信度: {i["score"]}\n'
+    return ret
+
+
 COMMAND_LIST = {
     '0': {
         'userinfo': userinfo,
@@ -103,6 +119,7 @@ COMMAND_LIST = {
     },
     '1': {
         'forget': forget,
+        'image': image,
     },
     '2': {
         'role': role,

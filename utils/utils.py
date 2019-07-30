@@ -23,3 +23,13 @@ def list_get(lst, idx, default=None):
         return lst[idx]
     except IndexError:
         return default
+
+
+def print_color(msg, color='pink'):
+    color_mapping = {
+        'pink': '\033[1;35m',
+        'origin': '\033[0m',
+    }
+    default_color = color_mapping['pink']
+    origin_color = color_mapping['origin']
+    print(f'{color_mapping.get(color, default_color)}{msg}{origin_color}')
