@@ -113,7 +113,7 @@ def image(_, _1, args):
     ret = ''
     count = 0
     for i in result:
-        ret += f'猜测结果: {i["root"]}, 确信度: {i["score"]:.2f}\n'
+        ret += f'猜测结果: {i["keyword"]}({i["root"]}), 确信度: {i["score"]:.2f}\n'
         count += 1
         if count >= 2:
             break
