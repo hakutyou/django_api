@@ -105,10 +105,18 @@ def image(_, _1, args):
     if not m:
         return None
     url = m.group('url')
-    result = baidu.image_detect(url)['result']
+    result = baidu.image_detect(url)
+    try:
+        result = result['result']
+    except KeyError:
+        return '图片格式错误'
     ret = ''
-    for i in result:
-        ret += f'猜测结果: {i["root"]}, 确信度: {i["score"]}\n'
+    count = 0
+    for i in result['result']:
+        ret += f'猜测结果: {i["root"]}, 确信度: {i["score"]:.2f}\n'
+        count += 1
+        if count >= 2:
+            break
     return ret
 
 
