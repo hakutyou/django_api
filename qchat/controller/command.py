@@ -112,7 +112,7 @@ def image(_, _1, args):
         return '图片格式错误'
     ret = ''
     count = 0
-    for i in result['result']:
+    for i in result:
         ret += f'猜测结果: {i["root"]}, 确信度: {i["score"]:.2f}\n'
         count += 1
         if count >= 2:
