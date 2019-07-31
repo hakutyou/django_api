@@ -120,6 +120,25 @@ def image(_, _1, args):
     return ret
 
 
+def ocr(_, _1, args):
+    picture_url = args[0]
+    m = re.match(r'^\[CQ:image,file=(?P<file>.+),url=(?P<url>.+)\]$', picture_url)
+    url = m.group('url')
+    try:
+        lang = args[1]
+    except KeyError:
+        lang = 'CHN_ENG'
+    result = baidu.ocr_basic(url, lang)
+    try:
+        result = result['words_result']
+    except KeyError:
+        return '图片格式错误'
+    ret = ''
+    for i in result:
+        ret += f'{i["keyword"]}({i["root"]})\n'
+    return ret
+
+
 COMMAND_LIST = {
     '0': {
         'userinfo': userinfo,
@@ -128,11 +147,13 @@ COMMAND_LIST = {
     '1': {
         'forget': forget,
         'image': image,
+        'ocr': ocr,
     },
     '2': {
         'role': role,
         'learn': learn,
         'learn*': learn,
+        'ocr': ocr,
     },
     '3': {
         'learn': learn,
