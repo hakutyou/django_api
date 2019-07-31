@@ -2,7 +2,7 @@ import base64
 
 import requests
 
-from external.interface import baidu_service
+from external.interface import baidu_service, baidu_ocr_service
 
 
 def image_detect(url):
@@ -24,5 +24,5 @@ def ocr_basic(url, lang):
         'detect_language': True,
         'probability': False,
     }
-    response = baidu_service.post('/rest/2.0/ocr/v1/general_basic', data=data)
+    response = baidu_ocr_service.post('/rest/2.0/ocr/v1/general_basic', data=data)
     return response

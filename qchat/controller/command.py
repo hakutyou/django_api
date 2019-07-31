@@ -126,7 +126,7 @@ def ocr(_, _1, args):
     url = m.group('url')
     try:
         lang = args[1]
-    except KeyError:
+    except IndexError:
         lang = 'CHN_ENG'
     result = baidu.ocr_basic(url, lang)
     try:
@@ -135,7 +135,7 @@ def ocr(_, _1, args):
         return '图片格式错误'
     ret = ''
     for i in result:
-        ret += f'{i["keyword"]}({i["root"]})\n'
+        ret += f'{i["words"]}\n'
     return ret
 
 
