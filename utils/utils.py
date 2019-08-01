@@ -1,6 +1,7 @@
 import datetime
 import random
 import string
+import sha3
 
 
 def random_string(rule: str = string.ascii_letters + string.digits, length: int = 16):
@@ -33,3 +34,12 @@ def print_color(msg, color='pink'):
     default_color = color_mapping['pink']
     origin_color = color_mapping['origin']
     print(f'{color_mapping.get(color, default_color)}{msg}{origin_color}')
+
+
+def hash(message):
+    """
+    该项目使用的信息摘要算法
+    """
+    k = sha3.keccak_224()
+    k.update(bytes(message, encoding='utf-8'))
+    return k.hexdigest()
