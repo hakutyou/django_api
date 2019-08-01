@@ -2,7 +2,7 @@ import base64
 
 import requests
 
-from external.interface import baidu_service, baidu_ocr_service
+from external.interface import baidu_vision_service, baidu_ocr_service
 
 
 def image_detect(url):
@@ -10,7 +10,7 @@ def image_detect(url):
     data = {
         'image': image_base64,
     }
-    response = baidu_service.post('/rest/2.0/image-classify/v2/advanced_general', data=data)
+    response = baidu_vision_service.post('/rest/2.0/image-classify/v2/advanced_general', data=data)
     return response
 
 

@@ -275,3 +275,17 @@ USE_TZ = True
 # 12. Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 STATIC_URL = '/static/'
+
+# 13. 应用配置
+# 13.1 腾讯短信包
+SMS_APPID = config('SMS_APPID')
+SMS_APPKEY = config('SMS_APPKEY')
+SMS_TEMPLATE_ID = config('SMS_TEMPLATE_ID')
+
+# 13.2 百度视觉
+VISION_CLIENT_ID = config('VISION_CLIENT_ID')
+VISION_SECRET = config('VISION_SECRET')
+
+# 13.3 百度 OCR
+OCR_CLIENT_ID = config('OCR_CLIENT_ID')
+OCR_SECRET = config('OCR_SECRET')

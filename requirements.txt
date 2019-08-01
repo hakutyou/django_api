@@ -1,7 +1,7 @@
 cos-python-sdk-v5
+qcloudsms_py
 Django
 django-cors-middleware
-django-mongolog
 django_redis
 djangorestframework
 djangorestframework-simplejwt
