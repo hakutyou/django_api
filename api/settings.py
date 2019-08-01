@@ -189,7 +189,7 @@ SESSION_CACHE_ALIAS = "default"
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://172.18.0.100:6379/1",
+        "LOCATION": f'redis://{config("REDIS_HOST")}:{config("REDIS_PORT")}/{config("REDIS_INDEX")}',
         'TIMEOUT': 604800,  # 7 days
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
