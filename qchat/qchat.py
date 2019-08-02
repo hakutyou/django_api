@@ -1,9 +1,9 @@
 import base64
 import json
 import re
-import time
 
 import requests
+import time
 
 from .controller import command
 from .models import CoolqReply, CoolqSubject
@@ -163,7 +163,7 @@ def qchat_gnormal(post, self_id):  # 群消息
 
     # Command Mode
     if message[0] == '/':
-        m = re.match('^/(?P<command>[a-z*\-]+?)(?:(?P<flag>[^a-z*\-])(?P<args>.+?))?$', message)
+        m = re.match('^/(?P<command>[a-z*\-]+?)(?:(?P<flag>[^a-z*\-])+(?P<args>.+?))?$', message)
         if m:
             _command = m.group('command')
             _flag = m.group('flag')
