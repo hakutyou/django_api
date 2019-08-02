@@ -8,6 +8,10 @@ import requests
 from .controller import command
 from .models import CoolqReply, CoolqSubject
 
+robot_qq = [
+    1654240380,
+]
+
 admin_qq = [
     2295122015,
 ]
@@ -78,14 +82,7 @@ def qchat_group(post, self_id):
     message = post.get('message')  # 消息内容
     group_id = post.get('group_id')  # 群号
 
-    if self_id == 3468460294:  # sirat
-        if group_id == 792626419:  # Secret base
-            # 万里弦歌
-            requests.get(f'https://sirat.emilia.fun/send_group_msg?group_id=188283809&message={message}',
-                         headers=headers)
-            # 朝花夕拾
-            requests.get(f'https://sirat.emilia.fun/send_group_msg?group_id=798333509&message={message}',
-                         headers=headers)
+    if self_id not in robot_qq:
         return Response()
 
     if (sub_type == 'normal') and (group_id in receive_group):
@@ -117,10 +114,12 @@ def qchat_group(post, self_id):
 
             # 测试
             requests.get(f'https://coolq.emilia.fun/send_group_msg?group_id=164730098&message={text}', headers=headers)
-            # Secret base
-            requests.get(f'https://coolq.emilia.fun/send_group_msg?group_id=792626419&message={text}', headers=headers)
             # 百香果双响炮
             requests.get(f'https://coolq.emilia.fun/send_group_msg?group_id=737855501&message={text}', headers=headers)
+            # 万里弦歌
+            requests.get(f'https://sirat.emilia.fun/send_group_msg?group_id=188283809&message={text}', headers=headers)
+            # 朝花夕拾
+            requests.get(f'https://sirat.emilia.fun/send_group_msg?group_id=798333509&message={text}', headers=headers)
         return Response()
 
     # 无视的群
