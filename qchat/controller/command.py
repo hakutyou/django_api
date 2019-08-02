@@ -7,7 +7,7 @@ from utils.utils import list_get
 from . import wuxia
 
 
-def userinfo(post, self_id, _):
+def userinfo(post, self_id):
     user_id = post.get('user_id')  # QQ 号
     message = post.get('message')  # 消息内容
     group_id = post.get('group_id')  # 群号
@@ -26,7 +26,7 @@ def userinfo(post, self_id, _):
     return reply
 
 
-def state(post, _, _1):
+def state(post, _):
     group_id = post.get('group_id')
     from_title = qchat.title_group.get(str(group_id), qchat.default_title)
     if from_title:
@@ -34,8 +34,8 @@ def state(post, _, _1):
     return None
 
 
-def role(_, self_id, args):
-    # m = re.match('^/role(?P<flag>.)(?P<qq_number>[0-9]+)(?P=flag)(?P<zone>.+)', message)
+def role(post, self_id):
+    args = post['args']
     try:
         qq_number = int(args[0])
         zone = args[1]
@@ -44,7 +44,8 @@ def role(_, self_id, args):
     return wuxia.get_wuxia_role(qq_number, zone, self_id)
 
 
-def forget(post, _, args):
+def forget(post, _):
+    args = post['args']
     user_id = post.get('user_id')
     group_id = post.get('group_id')
     pattern = args[0]
@@ -69,7 +70,8 @@ def forget(post, _, args):
     return None
 
 
-def learn(post, _, args):
+def learn(post, _):
+    args = post['args']
     command = post.get('command')
     user_id = post.get('user_id')
     group_id = post.get('group_id')
@@ -99,7 +101,8 @@ def learn(post, _, args):
     return ret
 
 
-def image(_, _1, args):
+def image(post, _):
+    args = post['args']
     picture_url = args[0]
     m = re.match(r'^\[CQ:image,file=(?P<file>.+),url=(?P<url>.+)\]$', picture_url)
     if not m:
@@ -120,7 +123,8 @@ def image(_, _1, args):
     return ret
 
 
-def ocr(_, _1, args):
+def ocr(post, _):
+    args = post['args']
     picture_url = args[0]
     m = re.match(r'^\[CQ:image,file=(?P<file>.+),url=(?P<url>.+)\]$', picture_url)
     url = m.group('url')
@@ -140,23 +144,19 @@ def ocr(_, _1, args):
 
 
 COMMAND_LIST = {
-    '0': {
-        'userinfo': userinfo,
-        'state': state,
-    },
-    '1': {
-        'forget': forget,
-        'image': image,
-        'ocr': ocr,
-    },
-    '2': {
-        'role': role,
-        'learn': learn,
-        'learn*': learn,
-        'ocr': ocr,
-    },
-    '3': {
-        'learn': learn,
-        'learn*': learn,
-    },
+    # 参数个数 + command
+    '0userinfo': userinfo,
+    '0state': state,
+
+    '1forget': forget,
+    '1image': image,
+    '1ocr': ocr,
+
+    '2role': role,
+    '2learn': learn,
+    '2learn*': learn,
+    '2ocr': ocr,
+
+    '3learn': learn,
+    '3learn*': learn,
 }
