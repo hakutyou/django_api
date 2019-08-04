@@ -5,11 +5,11 @@ django-cors-middleware
 django_redis
 djangorestframework
 djangorestframework-simplejwt
-gevent
 gunicorn
 mysqlclient
 PyJWT
 python-decouple
 redis
 tornado
+requests
 pysha3

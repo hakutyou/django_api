@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     # 'mongolog',
     'corsheaders',
     'qcloud',
-    'qchat',
 ]
 
 # 2. 中间件配置
@@ -85,77 +84,136 @@ TEMPLATES = [
     },
 ]
 
+
 # 5.日志配置
+def debug_filter(record):
+    if record.levelname == 'DEBUG':
+        return True
+    return False
+
+
+def info_filter(record):
+    if record.levelname == 'INFO':
+        return True
+    return False
+
+
+def warning_filter(record):
+    if record.levelname == 'WARNING':
+        return True
+    return False
+
+
+def error_filter(record):
+    if record.levelname == 'ERROR':
+        return True
+    return False
+
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,  # True 表示禁用日志
     'loggers': {  # 5.1 总览
-        # 'django': {  # django
-        #     'handlers': ['console'],  # 选择 handlers
-        #     'propagate': True,
-        #     'level': 'DEBUG'
-        # },
         'django.db.backends': {
-            'handlers': ['console'],
+            'handlers': ['sql'],
             'propagate': False,
             'level': 'DEBUG'
         },
         'api': {  # 项目内的 logger.info
-            'handlers': ['console'],  # ['mongolog'],
+            'handlers': ['error_console', 'warning_console', 'info_console', 'debug_console'],
             'propagate': False,
-            'level': 'INFO',
+            'level': 'DEBUG',
         }
     },
     'handlers': {  # 5.2 处理信息
-        # -------------------------------------------------------------------------------
-        # 如果出现 pymongo.errors.ServerSelectionTimeoutError: No servers found yet
-        # 尝试将 mongolog/handlers.py:139 修改为 MongoClient(self.connection, w=self.w, j=self.j, connect=False)
-        # -------------------------------------------------------------------------------
-        # 'mongolog': {
-        #     # 输出到 MongoDB
-        #     'class': 'mongolog.SimpleMongoLogHandler',
-        #     'connection': 'mongodb://api:kugui_st@emilia.fun:27017/mongolog',
-        #     'collection': 'log_api_debug' if DEBUG else 'log_api',
-        #     'level': 'DEBUG',
-        # },
         'sql': {
             # 输出到 stderr
             'class': 'logging.StreamHandler',
-            # 仅 debug 环境
             'filters': ['debug_environment'],
             'formatter': 'sql',
             'level': 'DEBUG',
         },
-        'console': {
-            # 输出到 stderr
+        'debug_console': {
             'class': 'logging.StreamHandler',
-            # 仅 debug 环境
-            'filters': ['debug_environment'],
-            'formatter': 'verbose',
+            'filters': ['debug_filter'],
+            'formatter': 'debug_verbose',
             'level': 'DEBUG',
         },
+        'info_console': {
+            'class': 'logging.StreamHandler',
+            'filters': ['info_filter'],
+            'formatter': 'info_verbose',
+            'level': 'INFO',
+        },
+        'warning_console': {
+            'class': 'logging.StreamHandler',
+            'filters': ['warning_filter'],
+            'formatter': 'warning_verbose',
+            'level': 'WARNING',
+        },
+        'error_console': {
+            'class': 'logging.StreamHandler',
+            'filters': ['error_filter'],
+            'formatter': 'error_verbose',
+            'level': 'ERROR',
+        }
     },
     'formatters': {  # 5.3 格式化
         'sql': {  # SQL
-            'format': '''[SQL]
-            duration: {duration}s
-            sql: {sql}
-            params: {params}
-            ''',
+            'format': '【SQL】\n'
+                      'duration: {duration}s\n'
+                      'sql: {sql}\n'
+                      'params: {params}\n',
             'style': '{'
         },
-        'verbose': {
+        'debug_verbose': {
+            'format': '【DEBUG】\n'
+                      '[{name}|{levelname}] - {asctime}\n'
+                      '{filename}:{lineno} {message}\n',
+            'style': '{',
+        },
+        'info_verbose': {
+            'format': '【INFO】\n'
+                      'duration: {duration}s\n'
+                      'file: {filename}:{lineno}\n'
+                      'url: {message}\n'
+                      '{method}: {post}\n'
+                      'response: {response}\n',
+            'style': '{',
+        },
+        'warning_verbose': {
             'format': '[{name}|{levelname}] - {asctime}\n'
-                      '{filename}:{lineno} {message}',
+                      '{filename}:{lineno} {message}\n',
+            'style': '{',
+        },
+        'error_verbose': {
+            'format': '[{name}|{levelname}] - {asctime}\n'
+                      '{filename}:{lineno} {message}\n',
             'style': '{',
         },
     },
     'filters': {  # 5.4 处理控制
-        'debug_environment': {
+        'debug_environment': {  # DEBUG 环境
             '()': 'django.utils.log.RequireDebugTrue',
         },
-        'production_environment': {
-            '()': 'django.utils.log.RequireDebugFalse',
+        # 'production_environment': {
+        #     '()': 'django.utils.log.RequireDebugFalse',
+        # },
+        'debug_filter': {  # logger.debug
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': debug_filter,
+        },
+        'info_filter': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': info_filter,
+        },
+        'warning_filter': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': warning_filter,
+        },
+        'error_filter': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': error_filter,
         },
     },
 }

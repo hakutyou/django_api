@@ -1,4 +1,4 @@
-#+TITLE: Django API
+#+TITLE: 通用 API 接口
 #+AUTHOR: 白鳥鵠
 #+DATE: 2019-07-22
 

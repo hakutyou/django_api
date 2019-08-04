@@ -21,5 +21,5 @@ urlpatterns = [
     path('auth/', include('auth.urls')),
     path('qcloud/', include('qcloud.urls')),
     path('mail/', include('mail.urls')),
-    path('qchat/', include('qchat.urls')),
+    path('image/', include('image.urls')),
 ]
