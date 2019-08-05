@@ -1,13 +1,14 @@
 import json
+import time
 import traceback
 
 import redis
-import time
 from django.conf import settings
 from django.core import mail
 from django.http import HttpResponse, JsonResponse
 
-from api.shortcuts import Response, logger
+from api.service import logger
+from api.shortcuts import Response
 from utils import string_color, protect_dict
 
 

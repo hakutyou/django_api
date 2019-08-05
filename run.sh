@@ -1,4 +1,5 @@
 #!/bin/sh
 
-# 修正 mongolog 的 bug
-sed -i 's/,serverSelectionTimeoutMS=5//' `find venv/lib/python3.6/site-packages/mongolog -type f`
+pip install -r requirements.txt
+cp script/product.env .env
+gunicorn -c gunicorn.py api.wsgi --capture-output

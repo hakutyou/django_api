@@ -1,10 +1,10 @@
 import json
+import time
 
 import requests
-import time
 from django.core.cache import cache
 
-from api.shortcuts import logger
+from api.service import logger
 from utils import string_color, protect_dict
 
 

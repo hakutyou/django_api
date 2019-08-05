@@ -1,8 +1,4 @@
-import logging
-
 from rest_framework import response
-
-logger = logging.getLogger(__name__)
 
 _ERROR_LIST = {
     # 小于 0 为 外部错误
