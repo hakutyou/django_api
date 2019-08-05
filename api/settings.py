@@ -34,17 +34,20 @@ WSGI_APPLICATION = 'api.wsgi.application'
 
 # 1. 应用配置（影响 Model）
 INSTALLED_APPS = [
-    'django.contrib.admin',
+    # 'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'rest_framework',
-    # 'mongolog',
+    'account',
     'corsheaders',
     'qcloud',
+    # 'rest_framework',
+    # 'mongolog',
 ]
+
+AUTH_USER_MODEL = 'account.UserModels'
 
 # 2. 中间件配置
 MIDDLEWARE = [
@@ -86,20 +89,20 @@ TEMPLATES = [
 
 
 # 5.日志配置
-def debug_filter(record):
-    if record.levelname == 'DEBUG':
+def info_filter_request(record):
+    """
+    向其他服务器发送 Request
+    """
+    if record.levelname == 'INFO' and record.koto == 'request':
         return True
     return False
 
 
-def info_filter(record):
-    if record.levelname == 'INFO':
-        return True
-    return False
-
-
-def warning_filter(record):
-    if record.levelname == 'WARNING':
+def info_filter_response(record):
+    """
+    接受 Request 返回 Response
+    """
+    if record.levelname == 'INFO' and record.koto == 'response':
         return True
     return False
 
@@ -120,7 +123,7 @@ LOGGING = {
             'level': 'DEBUG'
         },
         'api': {  # 项目内的 logger.info
-            'handlers': ['error_console', 'warning_console', 'info_console', 'debug_console'],
+            'handlers': ['error_console', 'info_console_request', 'info_console_response'],
             'propagate': False,
             'level': 'DEBUG',
         }
@@ -133,30 +136,24 @@ LOGGING = {
             'formatter': 'sql',
             'level': 'DEBUG',
         },
-        'debug_console': {
+        'info_console_response': {
             'class': 'logging.StreamHandler',
-            'filters': ['debug_filter'],
-            'formatter': 'debug_verbose',
-            'level': 'DEBUG',
-        },
-        'info_console': {
-            'class': 'logging.StreamHandler',
-            'filters': ['info_filter'],
-            'formatter': 'info_verbose',
+            'filters': ['info_filter_response'],
+            'formatter': 'info_verbose_response',
             'level': 'INFO',
         },
-        'warning_console': {
+        'info_console_request': {
             'class': 'logging.StreamHandler',
-            'filters': ['warning_filter'],
-            'formatter': 'warning_verbose',
-            'level': 'WARNING',
+            'filters': ['info_filter_request'],
+            'formatter': 'info_verbose_request',
+            'level': 'INFO',
         },
         'error_console': {
             'class': 'logging.StreamHandler',
             'filters': ['error_filter'],
             'formatter': 'error_verbose',
             'level': 'ERROR',
-        }
+        },
     },
     'formatters': {  # 5.3 格式化
         'sql': {  # SQL
@@ -166,29 +163,28 @@ LOGGING = {
                       'params: {params}\n',
             'style': '{'
         },
-        'debug_verbose': {
-            'format': '【DEBUG】\n'
-                      '[{name}|{levelname}] - {asctime}\n'
-                      '{filename}:{lineno} {message}\n',
-            'style': '{',
-        },
-        'info_verbose': {
-            'format': '【INFO】\n'
+        'info_verbose_response': {
+            'format': '【INFO RESPONSE】\n'
                       'duration: {duration}s\n'
-                      'file: {filename}:{lineno}\n'
                       'url: {message}\n'
-                      '{method}: {post}\n'
+                      '{method}: {data}\n'
                       'response: {response}\n',
             'style': '{',
         },
-        'warning_verbose': {
-            'format': '[{name}|{levelname}] - {asctime}\n'
-                      '{filename}:{lineno} {message}\n',
+        'info_verbose_request': {
+            'format': '【INFO REQUEST】\n'
+                      'duration: {duration}s\n'
+                      'url: {message}\n'
+                      '{method}: {data}\n'
+                      'response: {response}\n',
             'style': '{',
         },
         'error_verbose': {
-            'format': '[{name}|{levelname}] - {asctime}\n'
-                      '{filename}:{lineno} {message}\n',
+            'format': '【ERROR】\n'
+                      'file: {filename}:{lineno}\n'
+                      'url: {message}\n'
+                      '{method}: {data}\n'
+                      'except: {except}',
             'style': '{',
         },
     },
@@ -199,17 +195,13 @@ LOGGING = {
         # 'production_environment': {
         #     '()': 'django.utils.log.RequireDebugFalse',
         # },
-        'debug_filter': {  # logger.debug
+        'info_filter_request': {
             '()': 'django.utils.log.CallbackFilter',
-            'callback': debug_filter,
+            'callback': info_filter_request,
         },
-        'info_filter': {
+        'info_filter_response': {
             '()': 'django.utils.log.CallbackFilter',
-            'callback': info_filter,
-        },
-        'warning_filter': {
-            '()': 'django.utils.log.CallbackFilter',
-            'callback': warning_filter,
+            'callback': info_filter_response,
         },
         'error_filter': {
             '()': 'django.utils.log.CallbackFilter',
@@ -264,6 +256,7 @@ EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 # Default Receiver List
+EMAIL_MANAGER = config('EMAIL_RECEIVER')
 EMAIL_RECEIVER = [config('EMAIL_RECEIVER')]
 # Add mail user
 # insert into users(email, password) values \
@@ -322,8 +315,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # 11. I18N 配置
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
-LANGUAGE_CODE = 'en-US'
-# LANGUAGE_CODE = 'zh-cn'
+# LANGUAGE_CODE = 'en-US'
+LANGUAGE_CODE = 'zh-hans'
 TIME_ZONE = 'Asia/Shanghai'
 # TIME_ZONE = 'UTC'
 USE_I18N = True

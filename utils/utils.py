@@ -1,7 +1,10 @@
 import datetime
 import random
 import string
+
 import sha3
+
+from . import const
 
 
 def random_string(rule: str = string.ascii_letters + string.digits, length: int = 16):
@@ -26,14 +29,8 @@ def list_get(lst, idx, default=None):
         return default
 
 
-def print_color(msg, color='pink'):
-    color_mapping = {
-        'pink': '\033[1;35m',
-        'origin': '\033[0m',
-    }
-    default_color = color_mapping['pink']
-    origin_color = color_mapping['origin']
-    print(f'{color_mapping.get(color, default_color)}{msg}{origin_color}')
+def string_color(msg, color='pink'):
+    return f'{const.CONSOLE_COLOR[color]}{msg}{const.CONSOLE_COLOR["end"]}'
 
 
 def hash(message):
@@ -43,3 +40,13 @@ def hash(message):
     k = sha3.keccak_224()
     k.update(bytes(message, encoding='utf-8'))
     return k.hexdigest()
+
+
+def protect_dict(data: dict):
+    if data is None:
+        return data
+
+    for i in data:
+        if type(data[i]) == bytes:
+            data[i] = '<bytes>'
+    return data

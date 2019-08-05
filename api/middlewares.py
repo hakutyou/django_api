@@ -1,13 +1,14 @@
 import json
-import time
 import traceback
 
 import redis
+import time
 from django.conf import settings
 from django.core import mail
 from django.http import HttpResponse, JsonResponse
 
 from api.shortcuts import Response, logger
+from utils import string_color, protect_dict
 
 
 class EnhanceMiddleware(object):
@@ -22,18 +23,32 @@ class EnhanceMiddleware(object):
         time_cost = time.time() - time_begin
 
         # Logger
-        post = None
+        data = None
         if request.method == 'POST':
-            post = json.dumps(request.POST, indent=4, ensure_ascii=False)
+            try:
+                data = request.POST.dict()
+            except AttributeError:
+                data = request.body
+        try:
+            result = response.data
+        except AttributeError:
+            result = response
+
+        if type(data) == dict:
+            data = json.dumps(protect_dict(data), indent=4, ensure_ascii=False)
+        if type(result) == dict:
+            result = json.dumps(protect_dict(result), indent=4, ensure_ascii=False)
+
         logger.info(f'{request.scheme}://{request.get_host()}{request.get_full_path()}',
                     extra={
-                        'duration': time_cost,
+                        'koto': 'response',
+                        'duration': str(time_cost),
                         # 'receive_time': datetime.fromtimestamp(time_begin).strftime('%Y-%m-%d %H:%M:%S')
                         'method': request.method,
-                        'get': dict(request.GET),
-                        'post': post,
+                        # 'get': dict(request.GET),
+                        'data': string_color(data, 'green'),
                         # 'cookies': request.COOKIES,
-                        'response': response,
+                        'response': string_color(result, 'pink'),
                     })
 
         # Response
@@ -51,7 +66,24 @@ class EnhanceMiddleware(object):
         if response:
             return Response(response)
 
-        logger.error(f'{exception}: {traceback.format_exc()}')
+        data = None
+        if request.method == 'POST':
+            try:
+                data = json.dumps(request.POST.dict(), indent=4, ensure_ascii=False)
+            except AttributeError:
+                data = request.body
+
+        if type(data) == dict:
+            data = json.dumps(protect_dict(data), indent=4, ensure_ascii=False)
+
+        logger.error(f'{request.scheme}://{request.get_host()}{request.get_full_path()}',
+                     extra={
+                         'method': request.method,
+                         # 'get': dict(request.GET),
+                         'data': string_color(data, 'yellow'),
+                         'except': string_color(f'{exception}: {traceback.format_exc()}', 'red')
+                         # 'cookies': request.COOKIES,
+                     })
         if time.time() - self.mail_time > 60:
             # 60s 只发送一次
             mail.send_mail(exception, traceback.format_exc(),

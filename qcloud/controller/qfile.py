@@ -1,7 +1,7 @@
 from django.shortcuts import HttpResponse
 from qcloud_cos import CosClientError, CosServiceError
 
-# from account.controller.auth import require_permission
+# from account.controller.account import require_permission
 from api.shortcuts import Response
 from qcloud.config import *
 
