@@ -16,3 +16,4 @@ qcloudsms_py
 redis
 requests
 watchdog
+xlrd

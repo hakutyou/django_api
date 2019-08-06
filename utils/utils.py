@@ -1,4 +1,5 @@
 import datetime
+import os
 import random
 import string
 
@@ -15,11 +16,20 @@ def now():
     return datetime.datetime.utcnow()
 
 
+def read_time(str_time, format='%Y/%m/%d'):
+    return datetime.datetime.strptime(str_time, format)
+
+
 def get_time(utc_time, format='%Y-%m-%d %H:%M:%S', hours=8):
     utc_time = utc_time.replace(tzinfo=datetime.timezone.utc)
     tzutc_8 = datetime.timezone(datetime.timedelta(hours=hours))
     local_dt = utc_time.astimezone(tzutc_8).strftime(format)
     return local_dt
+
+
+def transform_time(str_time, format='%Y/%m/%d', output_format='%Y-%m-%d', hours=0):
+    # 时间加上 %H:%M:%S
+    return get_time(read_time(str_time, format), output_format, hours)
 
 
 def list_get(lst, idx, default=None):
@@ -50,3 +60,9 @@ def protect_dict(data: dict):
         if type(data[i]) == bytes:
             data[i] = '<bytes>'
     return data
+
+
+def run_shell(command: str):
+    result = os.popen(command).read()
+    result = [i for i in result.split('\n') if i != '']
+    return result
