@@ -1,11 +1,12 @@
 Django
 PyJWT
+celery
 cos-python-sdk-v5
-django-celery
 django-cors-middleware
 django_redis
 djangorestframework
 djangorestframework-simplejwt
+eventlet
 gevent
 gunicorn
 mysqlclient
