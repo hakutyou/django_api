@@ -40,10 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'account',
     'external',
     'qcloud',
-    # 'rest_framework',
     # 'mongolog',
 ]
 
@@ -285,16 +285,6 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
     )
 }
-if DEBUG:
-    REST_FRAMEWORK = {
-        # DRF Auth
-        'DEFAULT_AUTHENTICATION_CLASSES': (
-            'rest_framework_simplejwt.authentication.JWTAuthentication',
-        ),
-        'DEFAULT_PERMISSION_CLASSES': (
-            'rest_framework.permissions.IsAuthenticated',
-        ),
-    }
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': datetime.timedelta(hours=1),

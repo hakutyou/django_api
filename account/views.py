@@ -5,7 +5,7 @@ from rest_framework_simplejwt import views
 
 import utils
 from api.shortcuts import Response
-from .permission import permission
+from permission import permission
 from .serializer import UserSerializer, GroupSerializer
 
 

@@ -1,8 +1,8 @@
 import json
-import time
 import traceback
 
 import redis
+import time
 from django.conf import settings
 from django.core import mail
 from django.http import HttpResponse, JsonResponse

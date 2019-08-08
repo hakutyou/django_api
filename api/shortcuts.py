@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from rest_framework import response
 
 _ERROR_LIST = {
@@ -24,7 +25,7 @@ _ERROR_LIST = {
 
 
 # noinspection PyPep8Naming
-def Response(code, msg='', data=None, view=False):
+def Response(code, msg='', data=None, view=False, convert=False):
     ret = {'code': code}
     if code != 0:  # 出现错误
         if code in _ERROR_LIST.keys():
@@ -36,6 +37,8 @@ def Response(code, msg='', data=None, view=False):
         ret['data'] = data
     if view:  # TODO: view 先返回 Response 数据
         ret = response.Response(ret)
+    if convert:
+        ret = JsonResponse(ret)
     return ret
 
 
