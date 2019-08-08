@@ -7,18 +7,30 @@ from qcloud.config import *
 
 
 # @require_permission(1 << 0)
-def get_file_list(_, offset):
-    response = client.list_objects(Bucket=bucket, Prefix=offset,
+def get_file_list(_, path):
+    response = client.list_objects(Bucket=bucket, Prefix=path[1:],
                                    Delimiter='/', MaxKeys=10)
-    data = {'file': response.get('Contents', []),
-            'directory': response.get('CommonPrefixes', [])}
+    files = []
+    directories = []
+
+    for file in response.get('Contents', []):
+        filename = file['Key']
+        if filename[-1] == '/':
+            continue
+        files.append(filename)
+
+    for directory in response.get('CommonPrefixes', []):
+        directories.append(directory['Prefix'])
+
+    data = {'file': files,
+            'directory': directories}
     return Response(0, data=data)
 
 
 # @require_permission(1 << 1)
-def get_file_info(request, offset):
+def get_file_info(request, path):
     try:
-        response = client.get_object(Bucket=bucket, Key=offset)
+        response = client.get_object(Bucket=bucket, Key=path)
     except CosClientError as e:
         return Response(-1, str(e), 'CosClientError')
     except CosServiceError as e:
