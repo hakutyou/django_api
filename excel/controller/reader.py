@@ -1,3 +1,4 @@
+import csv
 import datetime
 
 import time
@@ -16,7 +17,7 @@ def add(self, x, y):
     return x + y
 
 
-def read_excel(filename, sheet_index=0):
+def read_xls(filename, sheet_index=0):
     def read_cell(sheet_cell):
         value = sheet_cell.value
         if sheet_cell.ctype == EXCEL_DATE:
@@ -39,4 +40,12 @@ def read_excel(filename, sheet_index=0):
                 if merged[0] <= y < merged[1] and merged[2] <= x < merged[3]:
                     cell_value = read_cell(sheet.cell(merged[0], merged[2]))
             print(cell_value, end='\t')
+        print('')
+
+
+def read_csv(filename):
+    sheet = csv.reader(open(filename, 'r'))
+    for line in sheet:
+        for atom in line:
+            print(atom, end='\t')
         print('')
