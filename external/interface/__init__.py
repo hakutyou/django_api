@@ -1,6 +1,6 @@
 from django.conf import settings
 
-from . import baidu, tencent
+from . import baidu, tencent, mail
 
 baidu_vision_service = baidu.BaiduService(client_id=settings.VISION_CLIENT_ID,
                                           client_secret=settings.VISION_SECRET)

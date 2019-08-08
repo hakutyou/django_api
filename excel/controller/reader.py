@@ -13,7 +13,7 @@ EXCEL_DATE = 3
 # TODO: celery 测试
 def add(self, x, y):
     print('enter call function ...')
-    time.sleep(5)
+    time.sleep(1)
     return x + y
 
 

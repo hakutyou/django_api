@@ -8,6 +8,7 @@ _ERROR_LIST = {
     1: 'Return Error',  # 返回类型错误
     2: 'Argument Error',  # 参数错误
     3: 'Permission Denied',
+    4: 'Request Denied',  # 请求方式(POST, GET)错误
     # 3: 'Not Found Error',
     # 4: 'Require Login',
     # 100 到 199 为自定义错误

@@ -18,6 +18,6 @@ from django.urls import path, include
 urlpatterns = [
     path('account/', include('account.urls')),
     path('qcloud/', include('qcloud.urls')),
-    path('mail/', include('mail.urls')),
+    path('external/', include('external.urls')),
     path('image/', include('image.urls')),
 ]

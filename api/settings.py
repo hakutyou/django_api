@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'account',
-    'corsheaders',
+    'external',
     'qcloud',
     # 'rest_framework',
     # 'mongolog',
@@ -252,7 +252,8 @@ CACHES = {
 CELERY_BROKER = f'redis://{config("REDIS_HOST")}:{config("REDIS_PORT")}/{config("BROKER_INDEX")}'
 CELERY_BACKEND = f'redis://{config("REDIS_HOST")}:{config("REDIS_PORT")}/{config("BACKEND_INDEX")}'
 CELERY_IMPORTS = (
-    'excel.controller'
+    'excel.controller',
+    'external.interface',
 )
 
 # 8. 邮件配置
