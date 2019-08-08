@@ -33,4 +33,5 @@ class UserPermission(LoginPermission):
             if not tencent_sms_service.check_sms('注册', mobile, code):
                 APIException.default_detail = Response(201)
                 raise APIException
+            return True
         return super().has_permission(request, view)
