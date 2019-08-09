@@ -1,7 +1,7 @@
 from django.core.cache import cache
 from qcloudsms_py import SmsSingleSender
 
-from utils.utils import hash, random_string
+from utils.utils import message_digest, random_string
 
 
 class TencentSMSService:
@@ -19,11 +19,12 @@ class TencentSMSService:
         except Exception as e:
             print(e)
             return False
-        cache.set(f'sms:{phone_number}:{hash(name)}', code, timeout * 60 + 10)
+        cache.set(f'sms:{phone_number}:{message_digest(name)}', code, timeout * 60 + 10)
         return True
 
-    def check_sms(self, name, phone_number, code):
-        real_code = cache.get(f'sms:{phone_number}:{hash(name)}')
+    @staticmethod
+    def check_sms(name, phone_number, code):
+        real_code = cache.get(f'sms:{phone_number}:{message_digest(name)}')
         if code == real_code:
             return True
         return False

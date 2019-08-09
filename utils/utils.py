@@ -16,20 +16,20 @@ def now():
     return datetime.datetime.utcnow()
 
 
-def read_time(str_time, format='%Y/%m/%d'):
-    return datetime.datetime.strptime(str_time, format)
+def read_time(str_time, time_format='%Y/%m/%d'):
+    return datetime.datetime.strptime(str_time, time_format)
 
 
-def get_time(utc_time, format='%Y-%m-%d %H:%M:%S', hours=8):
+def get_time(utc_time, time_format='%Y-%m-%d %H:%M:%S', hours=8):
     utc_time = utc_time.replace(tzinfo=datetime.timezone.utc)
     tzutc_8 = datetime.timezone(datetime.timedelta(hours=hours))
-    local_dt = utc_time.astimezone(tzutc_8).strftime(format)
+    local_dt = utc_time.astimezone(tzutc_8).strftime(time_format)
     return local_dt
 
 
-def transform_time(str_time, format='%Y/%m/%d', output_format='%Y-%m-%d', hours=0):
+def transform_time(str_time, time_format='%Y/%m/%d', output_format='%Y-%m-%d', hours=0):
     # 时间加上 %H:%M:%S
-    return get_time(read_time(str_time, format), output_format, hours)
+    return get_time(read_time(str_time, time_format), output_format, hours)
 
 
 def list_get(lst, idx, default=None):
@@ -43,7 +43,7 @@ def string_color(msg, color='pink'):
     return f'{const.CONSOLE_COLOR[color]}{msg}{const.CONSOLE_COLOR["end"]}'
 
 
-def hash(message):
+def message_digest(message):
     """
     该项目使用的信息摘要算法
     """

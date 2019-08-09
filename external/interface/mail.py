@@ -22,7 +22,7 @@ def celery_send_mail(self, post):
 @permission_classes((permission.LoginPermission,))
 def send_mail(request):
     _type = 'mail'
-    ic = get_time(now(), format='%Y%m%d%H%M%S') + random_string(length=6)
+    ic = get_time(now(), time_format='%Y%m%d%H%M%S') + random_string(length=6)
     celery_stage(ic, _type, 0)
     celery_send_mail.delay(ic, _type, request.POST)
     print(celery_send_mail)

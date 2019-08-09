@@ -2,6 +2,9 @@ from django.conf import settings
 
 from . import baidu, tencent_sms, tencent_cos
 
+baidu_face_service = baidu.BaiduService(client_id=settings.FACE_CLIENT_ID,
+                                        client_secret=settings.FACE_SECRET)
+
 baidu_vision_service = baidu.BaiduService(client_id=settings.VISION_CLIENT_ID,
                                           client_secret=settings.VISION_SECRET)
 
