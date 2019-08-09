@@ -338,3 +338,9 @@ VISION_SECRET = config('VISION_SECRET')
 # 13.3 百度 OCR
 OCR_CLIENT_ID = config('OCR_CLIENT_ID')
 OCR_SECRET = config('OCR_SECRET')
+
+# 13.4 腾讯 CoS
+COS_BUCKET = config('COS_BUCKET')
+COS_ID = config('COS_ID')
+COS_KEY = config('COS_KEY')
+COS_REGION = config('COS_REGION')

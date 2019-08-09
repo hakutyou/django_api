@@ -3,13 +3,12 @@ from qcloud_cos import CosClientError, CosServiceError
 
 # from account.controller.account import require_permission
 from api.shortcuts import Response
-from qcloud.config import *
+from external.interface import tencent_cos_service
 
 
 # @require_permission(1 << 0)
 def get_file_list(_, path):
-    response = client.list_objects(Bucket=bucket, Prefix=path[1:],
-                                   Delimiter='/', MaxKeys=10)
+    response = tencent_cos_service.list(path=path[1:])
     files = []
     directories = []
 
@@ -30,7 +29,7 @@ def get_file_list(_, path):
 # @require_permission(1 << 1)
 def get_file_info(request, path):
     try:
-        response = client.get_object(Bucket=bucket, Key=path)
+        response = tencent_cos_service.file(path=path)
     except CosClientError as e:
         return Response(-1, str(e), 'CosClientError')
     except CosServiceError as e:

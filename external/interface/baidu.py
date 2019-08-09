@@ -1,7 +1,7 @@
 import json
-import time
 
 import requests
+import time
 from django.core.cache import cache
 
 from api.service import logger

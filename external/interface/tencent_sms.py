@@ -4,7 +4,7 @@ from qcloudsms_py import SmsSingleSender
 from utils.utils import hash, random_string
 
 
-class TencentService:
+class TencentSMSService:
     def __init__(self, appid, appkey, template_id):
         self.ssender = SmsSingleSender(appid, appkey)
         self.template_id = template_id

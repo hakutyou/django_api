@@ -17,7 +17,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('account/', include('account.urls')),
-    path('qcloud/', include('qcloud.urls')),
     path('external/', include('external.urls')),
+    path('qcloud/', include('qcloud.urls')),
     path('image/', include('image.urls')),
 ]
