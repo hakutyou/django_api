@@ -1,4 +1,7 @@
 #!/bin/bash
 
+cp script/product.env .env
 pip install -r requirements.txt
-ps aux | grep gunicorn | grep projectname | awk '{ print $2 }' | xargs kill -HUP
+# python manage.py makemigrations
+# python manage.py migrate
+pgrep gunicorn | xargs kill -HUP
