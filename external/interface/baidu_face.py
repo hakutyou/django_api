@@ -19,7 +19,7 @@ class BaiduFaceService(BaiduService):
     detect_angle = {
         'yaw': lambda x: x > 20,
         'pitch': lambda x: x > 20,
-        'roll': lambda x: not 10 <= abs(x % 90) <= 80,
+        'roll': lambda x: 10 <= abs(x % 90) <= 80,
     }
     detect_location = {
         'width': lambda x: x < 200,
