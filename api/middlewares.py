@@ -85,10 +85,10 @@ class EnhanceMiddleware(object):
                          'except': string_color(f'{exception}: {traceback.format_exc()}', 'red')
                          # 'cookies': request.COOKIES,
                      })
-        if time.time() - self.mail_time > 60:
-            # 60s 只发送一次
-            mail.send_mail(exception, traceback.format_exc(),
-                           settings.EMAIL_HOST_USER, settings.EMAIL_MANAGER)
-            self.mail_time = time.time()
-            return Response(1001)
-        return Response(1000)
+        if settings.DEBUG and (time.time() - self.mail_time < 60):
+            return Response(100)
+        # 正式环境 60s 只发送一次
+        mail.send_mail(exception, traceback.format_exc(),
+                       settings.EMAIL_HOST_USER, settings.EMAIL_RECEIVER)
+        self.mail_time = time.time()
+        return Response(1001)

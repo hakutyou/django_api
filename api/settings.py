@@ -157,14 +157,14 @@ LOGGING = {
     },
     'formatters': {  # 5.3 格式化
         'sql': {  # SQL
-            'format': '【SQL】\n'
+            'format': '【SQL】 {asctime}\n'
                       'duration: {duration}s\n'
                       'sql: {sql}\n'
                       'params: {params}\n',
             'style': '{'
         },
         'info_verbose_response': {
-            'format': '【INFO RESPONSE】\n'
+            'format': '【处理请求】 {asctime}\n'
                       'duration: {duration}s\n'
                       'url: {message}\n'
                       '{method}: {data}\n'
@@ -172,7 +172,7 @@ LOGGING = {
             'style': '{',
         },
         'info_verbose_request': {
-            'format': '【INFO REQUEST】\n'
+            'format': '【发送请求】 {asctime}\n'
                       'duration: {duration}s\n'
                       'url: {message}\n'
                       '{method}: {data}\n'
@@ -180,7 +180,7 @@ LOGGING = {
             'style': '{',
         },
         'error_verbose': {
-            'format': '【ERROR】\n'
+            'format': '【错误】 {asctime}\n'
                       'file: {filename}:{lineno}\n'
                       'url: {message}\n'
                       '{method}: {data}\n'
@@ -264,7 +264,6 @@ EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 # Default Receiver List
-EMAIL_MANAGER = config('EMAIL_RECEIVER')
 EMAIL_RECEIVER = [config('EMAIL_RECEIVER')]
 # Add mail user
 # insert into users(email, password) values \
@@ -274,6 +273,8 @@ EMAIL_RECEIVER = [config('EMAIL_RECEIVER')]
 
 # 9. JWT 配置
 REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 20,
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
