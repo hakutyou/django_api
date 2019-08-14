@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'account',
     'external',
     'qcloud',
+    'record',
     # 'mongolog',
 ]
 
@@ -274,7 +275,7 @@ EMAIL_RECEIVER = [config('EMAIL_RECEIVER')]
 # 9. JWT 配置
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 20,
+    'PAGE_SIZE': 10,
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),

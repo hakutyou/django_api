@@ -16,7 +16,9 @@ Including another URLconf
 from django.urls import path, include
 
 urlpatterns = [
+    path('wechat/', include('wechat.urls')),
     path('account/', include('account.urls')),
+    path('data/', include('record.urls')),
     path('external/', include('external.urls')),
     path('qcloud/', include('qcloud.urls')),
     path('image/', include('image.urls')),

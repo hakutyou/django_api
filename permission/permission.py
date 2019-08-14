@@ -28,9 +28,9 @@ class UserPermission(LoginPermission):
             code = request.POST.get('code')
             mobile = request.POST.get('mobile')
             if (not code) or (not mobile):
-                APIException.default_detail = Response(200)
+                APIException.default_detail = Response(2)
                 raise APIException
-            if not tencent_sms_service.check_sms('注册', mobile, code):
+            if not tencent_sms_service.check_sms('register', mobile, code):
                 APIException.default_detail = Response(201)
                 raise APIException
             return True

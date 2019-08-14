@@ -4,11 +4,11 @@ import traceback
 import redis
 import time
 from django.conf import settings
-from django.core import mail
 from django.http import HttpResponse, JsonResponse
 
 from api.service import logger
 from api.shortcuts import Response
+from external.interface.mail import internal_send_mail
 from utils import string_color, protect_dict
 
 
@@ -85,10 +85,10 @@ class EnhanceMiddleware(object):
                          'except': string_color(f'{exception}: {traceback.format_exc()}', 'red')
                          # 'cookies': request.COOKIES,
                      })
-        if settings.DEBUG and (time.time() - self.mail_time < 60):
-            return Response(100)
+        if settings.DEBUG or (time.time() - self.mail_time < 60):
+            return Response(1000)
         # 正式环境 60s 只发送一次
-        mail.send_mail(exception, traceback.format_exc(),
-                       settings.EMAIL_HOST_USER, settings.EMAIL_RECEIVER)
+        internal_send_mail(exception, traceback.format_exc(),
+                           settings.EMAIL_RECEIVER)
         self.mail_time = time.time()
         return Response(1001)
