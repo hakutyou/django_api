@@ -1,5 +1,6 @@
 Django
 PyJWT
+beautifulsoup4
 celery
 cos-python-sdk-v5
 django-cors-middleware
@@ -9,7 +10,9 @@ djangorestframework-simplejwt
 eventlet
 gevent
 gunicorn
+lxml
 mysqlclient
+pycryptodome
 pysha3
 python-decouple
 qcloudsms_py
