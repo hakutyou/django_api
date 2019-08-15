@@ -29,6 +29,9 @@ class EnhanceMiddleware(object):
             try:
                 data = request.POST.dict()
             except AttributeError:
+                pass
+
+            if not data:
                 data = request.body
         try:
             result = response.data
@@ -37,6 +40,8 @@ class EnhanceMiddleware(object):
 
         if type(data) == dict:
             data = json.dumps(protect_dict(data), indent=4, ensure_ascii=False)
+        if type(data) == bytes:
+            data = data.decode('utf-8')
         if type(result) == dict:
             result = json.dumps(protect_dict(result), indent=4, ensure_ascii=False)
 
@@ -72,8 +77,10 @@ class EnhanceMiddleware(object):
             try:
                 data = json.dumps(request.POST.dict(), indent=4, ensure_ascii=False)
             except AttributeError:
-                data = request.body
+                pass
 
+            if not data:
+                data = request.body
         if type(data) == dict:
             data = json.dumps(protect_dict(data), indent=4, ensure_ascii=False)
 
