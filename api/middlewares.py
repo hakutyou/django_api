@@ -82,7 +82,7 @@ class EnhanceMiddleware(object):
                          'method': request.method,
                          # 'get': dict(request.GET),
                          'data': string_color(data, 'yellow'),
-                         'except': string_color(f'{exception}: {traceback.format_exc()}', 'red')
+                         'expect': string_color(f'{exception}: {traceback.format_exc()}', 'red')
                          # 'cookies': request.COOKIES,
                      })
         if settings.DEBUG or (time.time() - self.mail_time < 60):
