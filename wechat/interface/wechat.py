@@ -55,7 +55,7 @@ class WechatOfficial:
             receive = self.xml_analyse(request.body.decode())
             if request.GET.get('encrypt_type') == 'aes':
                 receive = self.xml_analyse(self.decrypt(receive['Encrypt']))
-            # print(receive)
+            print(receive)
             ##########
             # 回复信息
             ##########
@@ -69,13 +69,14 @@ class WechatOfficial:
                 'MsgType': 'text',
                 'Content': 'Hello!',
             }
-            response = {
-                'Encrypt': self.encrypt(self.xml_generate(data)),
-                'MsgSignature': msg_signature,
-                'TimeStamp': create_time,
-                'Nonce': nonce,
-            }
-            return self.xml_generate(response)
+            return self.xml_generate(data)
+            # response = {
+            #     'Encrypt': self.encrypt(self.xml_generate(data)),
+            #     'MsgSignature': msg_signature,
+            #     'TimeStamp': create_time,
+            #     'Nonce': nonce,
+            # }
+            # return self.xml_generate(response)
         else:
             return Response(1)
 
@@ -93,7 +94,10 @@ class WechatOfficial:
     def xml_generate(data):
         xml = '<xml>'
         for i in data:
-            xml += f'<{i}><![CDATA[{data[i]}]]></{i}>\n'
+            if i == 'TimeStamp':
+                xml += f'<{i}>{data[i]}</{i}>\n'
+            else:
+                xml += f'<{i}><![CDATA[{data[i]}]]></{i}>\n'
         xml += '</xml>'
         return xml
 
@@ -124,8 +128,10 @@ class WechatOfficial:
     def encrypt(self, text):
         block_size = 32
         cryptor = AES.new(self.aes_key, self.mode, self.aes_key[:16])
-        data = random_string(length=16) + struct.pack('I', socket.htonl(len(text))).decode() + text + self.appid
-        data_length = len(data)
+        data_prefix = random_string(length=16)
+        data_pack = struct.pack('I', socket.htonl(len(text)))
+        data = text + self.appid
+        data_length = len(data_pack) + len(data_prefix + data)
         amount_to_pad = block_size - (data_length % block_size)
         if amount_to_pad == 0:
             amount_to_pad = block_size
@@ -133,5 +139,5 @@ class WechatOfficial:
         pad = chr(amount_to_pad)
         data += pad * amount_to_pad
         # AES 加密
-        ciphertext = cryptor.encrypt(data.encode())
+        ciphertext = cryptor.encrypt(data_prefix.encode() + data_pack + data.encode())
         return base64.b64encode(ciphertext).decode()
