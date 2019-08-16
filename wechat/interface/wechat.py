@@ -55,28 +55,27 @@ class WechatOfficial:
             receive = self.xml_analyse(request.body.decode())
             if request.GET.get('encrypt_type') == 'aes':
                 receive = self.xml_analyse(self.decrypt(receive['Encrypt']))
-            print(receive)
             ##########
             # 回复信息
             ##########
             # 整个过程需要 5 秒内完成，否则丢到 celery 异步运行并且直接返回 success
-            # return 'success'
-            create_time = int(time.time())
-            data = {
-                'ToUserName': receive['FromUserName'],
-                'FromUserName': receive['ToUserName'],
-                'CreateTime': create_time,
-                'MsgType': 'text',
-                'Content': 'Hello!',
-            }
-            return self.xml_generate(data)
-            # response = {
-            #     'Encrypt': self.encrypt(self.xml_generate(data)),
-            #     'MsgSignature': msg_signature,
-            #     'TimeStamp': create_time,
-            #     'Nonce': nonce,
+            return 'success'
+            # create_time = int(time.time())
+            # data = {
+            #     'ToUserName': receive['FromUserName'],
+            #     'FromUserName': receive['ToUserName'],
+            #     'CreateTime': create_time,
+            #     'MsgType': 'text',
+            #     'Content': 'Hello!',
             # }
-            # return self.xml_generate(response)
+            # return self.xml_generate(data)
+            # # response = {
+            # #     'Encrypt': self.encrypt(self.xml_generate(data)),
+            # #     'MsgSignature': msg_signature,
+            # #     'TimeStamp': create_time,
+            # #     'Nonce': nonce,
+            # # }
+            # # return self.xml_generate(response)
         else:
             return Response(1)
 
