@@ -24,7 +24,9 @@ class TencentSMSService:
 
     @staticmethod
     def check_sms(name, phone_number, code):
-        real_code = cache.get(f'sms:{phone_number}:{message_digest(name)}')
+        cache_key = f'sms:{phone_number}:{message_digest(name)}'
+        real_code = cache.get(cache_key)
         if code == real_code:
+            cache.delete(cache_key)
             return True
         return False
