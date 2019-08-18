@@ -12,7 +12,7 @@ class RecordItemView(ListModelMixin,
     queryset = RecordItem.objects.all()
     pagination_class = api_settings.DEFAULT_PAGINATION_CLASS
     serializer_class = RecordItemSerializer
-    filter_check = ['name']
+    filter_check = ['name', 'sex', 'occupation']
 
     def filter_queryset(self, queryset):
         extra = {}

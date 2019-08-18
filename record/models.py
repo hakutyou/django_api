@@ -5,6 +5,8 @@ from django.db import models
 class RecordItem(models.Model):
     create_date = models.DateField(auto_now_add=True)
     name = models.CharField(max_length=128)
+    sex = models.IntegerField()
+    occupation = models.IntegerField()
 
     class Meta:
         db_table = 'record_item'
