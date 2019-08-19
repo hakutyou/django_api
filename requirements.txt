@@ -4,6 +4,7 @@ beautifulsoup4
 celery
 cos-python-sdk-v5
 django-cors-middleware
+django-filter
 django_redis
 djangorestframework
 djangorestframework-simplejwt
