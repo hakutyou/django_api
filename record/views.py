@@ -1,7 +1,7 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from rest_framework import generics
-from rest_framework.mixins import ListModelMixin
+from rest_framework.mixins import ListModelMixin, DestroyModelMixin
 from rest_framework.settings import api_settings
 
 from api.shortcuts import Response
@@ -11,7 +11,7 @@ from .serializer import RecordItemSerializer
 
 # Create your views here.
 class RecordItemView(ListModelMixin,
-                     generics.DestroyAPIView,
+                     DestroyModelMixin,
                      generics.GenericAPIView):
     queryset = RecordItem.objects.all()
     pagination_class = api_settings.DEFAULT_PAGINATION_CLASS
