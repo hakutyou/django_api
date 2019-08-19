@@ -5,6 +5,7 @@ from rest_framework.mixins import ListModelMixin, DestroyModelMixin, UpdateModel
 from rest_framework.settings import api_settings
 
 from api.shortcuts import Response
+from utils.decorator import loop_deal_id
 from .models import RecordItem, RecordItemFilter
 from .serializer import RecordItemSerializer
 
@@ -29,12 +30,13 @@ class RecordItemView(ListModelMixin,
         return self.list(request, *args, **kwargs)
 
     # 删除
+    @loop_deal_id
     def delete(self, request, *args, **kwargs):
-        request.pk = request.POST.get('id')
         try:
-            return self.destroy(request, *args, **kwargs)  # 204 表示删除成功
+            self.destroy(request, *args, **kwargs)  # 204 表示删除成功
+            return Response(0, data=request.pk)
         except RecordItem.DoesNotExist:
-            return Response(270, convert=True)
+            return Response(270, data=request.pk)
 
     # 增加
     def post(self, request, *args, **kwargs):
