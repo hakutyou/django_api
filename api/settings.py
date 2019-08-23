@@ -25,7 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'u*pc@ipsx3g=+1c3m)da9s&+$e_+9a$&o+-@x9ne^%^71qmk%%'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG')
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 # 0. 基本配置
 ALLOWED_HOSTS = ['*']  # 允许访问的 IP
