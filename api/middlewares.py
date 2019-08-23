@@ -59,7 +59,10 @@ class EnhanceMiddleware(object):
 
         # Response
         if type(response) == dict:
-            response = JsonResponse(response)
+            status = 200
+            if response.get('code'):
+                status = 500
+            response = JsonResponse(response, status=status)
         elif type(response) == str:
             response = HttpResponse(response)
         return response

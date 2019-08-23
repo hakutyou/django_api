@@ -42,7 +42,10 @@ def Response(code, msg='', data=None, view=False, convert=False):
     if view:  # TODO: view 先返回 Response 数据
         ret = response.Response(ret)
     if convert:
-        ret = JsonResponse(ret)
+        status = 200
+        if code != 0:
+            status = 500
+        ret = JsonResponse(ret, status=status)
     return ret
 
 
