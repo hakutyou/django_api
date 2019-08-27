@@ -12,7 +12,7 @@ baidu_ocr_service = baidu.BaiduService(client_id=settings.OCR_CLIENT_ID,
                                        client_secret=settings.OCR_SECRET)
 
 tencent_sms_service = tencent_sms.TencentSMSService(appid=settings.SMS_APPID,
-                                                    appkey=settings.SMS_APPKEY,
+                                                    app_key=settings.SMS_APPKEY,
                                                     template_id=settings.SMS_TEMPLATE_ID)
 
 tencent_cos_service = tencent_cos.TencentCoSService(region=settings.COS_REGION, secret_id=settings.COS_ID,

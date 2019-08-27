@@ -1,76 +1,62 @@
-from django.http import JsonResponse
-from rest_framework import response
+import time
+from django.http import JsonResponse, HttpResponse
 
-_ERROR_LIST = {
-    # 小于 0 为 外部错误
-    -1: 'Qcloud Error',  # 腾讯云 Cos 错误
-    -2: 'Redis Error',  # Redis 错误
-    # 大于 0 为 内部错误
-    1: 'Return Error',  # 返回类型错误
-    2: 'Argument Error',  # 参数错误
-    3: 'Permission Denied',
-    4: 'Request Denied',  # 请求方式(POST, GET)错误
-    # 3: 'Not Found Error',
-    # 4: 'Require Login',
-    # 100 到 199 为自定义错误
-    # 200 到 299 为用户错误
-    200: '请输入手机号码',
-    201: '短信验证码错误',
-    202: '账号不存在或手机错误',
-    210: '请先登录',
-    211: '原密码错误',
-    270: '记录不存在',
-    280: '人脸检测失败',
-    # 其他错误
-    999: 'TODO',  # 留坑待完善
-    1000: 'Fatal Error',  # 未捕捉的错误
-    1001: 'Fatal Error',  # 未捕捉的错误, 发送邮件
-}
+from api.service import logger
+from utils import string_color
 
 
 # noinspection PyPep8Naming
-def Response(code, msg='', data=None, view=False, convert=False):
-    ret = {'code': code}
-    if code != 0:  # 出现错误
-        if code in _ERROR_LIST.keys():
-            ret['msg'] = _ERROR_LIST[code]
+def Response(request, code=0, _type='dict', **kwargs):
+    """
+    code == 0 表示正常的返回
+    code > 0 表示错误的 request
+        code == 401 表示认证错误(401)
+    code < 0 表示外部错误
+    """
+    _status_mapper = {
+        0: 200,
+        400: 400,  # 参数有误
+        401: 401,  # 认证失败
+        500: 500,  # 未曾预料的请求
+    }
+    _type_mapper = {
+        'dict': JsonResponse,
+        'str': HttpResponse,
+    }
+    if _type == 'dict':
+        if code < 1000:
+            ret = kwargs
         else:
-            assert (100 <= code < 200)  # 只有 100 到 199 为自定义错误
-            ret['msg'] = msg
-    if data is not None:
-        ret['data'] = data
-    if view:  # TODO: view 先返回 Response 数据
-        ret = response.Response(ret)
-    if convert:
-        status = 200
-        if code != 0:
-            status = 500
-        ret = JsonResponse(ret, status=status)
-    return ret
-
-
-# key, type
-def check_request(keys):
-    """
-    装饰器, 用于检查 requests 的参数
-    用法示例
-    @check_request({
-        'name': [char]
-        'age': [int, None]
-    })
-    def create_user(request):
-        ....
-    """
-
-    def _check_request(func):
-        def wrapper(request, *args, **kwargs):
-            request.post = {}
-            for key in keys:
-                ap = request.POST.get(key, None)  # 实参
-                if type(ap) not in keys[key]:
-                    return Response(2)
-            return func(request, *args, **kwargs)
-
-        return wrapper
-
-    return _check_request
+            ret = {}
+        ret['code'] = code
+        content_type = 'application/json'
+    else:
+        ret = kwargs.get('data', '')
+        content_type = kwargs.get('content_type', 'text/plain')
+    status = _status_mapper.get(code, 500)
+    # logger
+    time_cost = time.time() - request.time_begin
+    if code == 0:
+        logger.info(f'{request.scheme}://{request.get_host()}{request.get_full_path()}',
+                    extra={
+                        'koto': 'response',
+                        'duration': str(time_cost),
+                        'method': request.method,
+                        'request': string_color(request.POST, 'green'),
+                        'response': string_color(ret, 'pink'),
+                    })
+    elif code >= 1000:
+        logger.error(f'{request.scheme}://{request.get_host()}{request.get_full_path()}',
+                     extra={
+                         'method': request.method,
+                         'request': string_color(request.POST, 'yellow'),
+                         'response': string_color(f'{kwargs["exception"]}\n{kwargs["traceback"]}', 'red')
+                     })
+    else:
+        logger.warning(f'{request.scheme}://{request.get_host()}{request.get_full_path()}',
+                       extra={
+                           'method': request.method,
+                           'request': string_color(request.POST, 'cyan'),
+                           'response': string_color(f'{ret}', 'yellow')
+                       })
+    return _type_mapper[_type](ret, status=status, content_type=content_type)

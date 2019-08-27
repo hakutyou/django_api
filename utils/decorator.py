@@ -1,5 +1,8 @@
 import json
 
+from rest_framework import decorators
+
+from api.exception import ServiceError
 from api.shortcuts import Response
 
 
@@ -8,18 +11,22 @@ def loop_deal_id(func):
         try:
             ids_list = json.loads(request.POST.get('id'))
         except TypeError:
-            return Response(2)
+            raise ServiceError('Argument Error', code=400)
 
         if isinstance(ids_list, list):
             result = []
             for i in ids_list:
                 request.pk = i
                 result.append(func(self, request, *args, **kargs))
-            return Response(0, data=result, convert=True)
+            return Response(request, 0, data=result)
 
         if isinstance(ids_list, int):
             request.pk = ids_list
-            return Response(0, data=func(self, request, *args, **kargs), convert=True)
-        return Response(2, convert=True)
+            return Response(request, 0, data=func(self, request, *args, **kargs))
+        raise ServiceError('Argument Error', code=400)
 
     return wrapper
+
+
+def api_view(http_method_names):
+    return decorators.api_view(http_method_names=http_method_names)

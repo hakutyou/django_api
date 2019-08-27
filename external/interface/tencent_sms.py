@@ -1,3 +1,5 @@
+import string
+
 from django.core.cache import cache
 from qcloudsms_py import SmsSingleSender
 
@@ -5,15 +7,15 @@ from utils.utils import message_digest, random_string
 
 
 class TencentSMSService:
-    def __init__(self, appid, appkey, template_id):
-        self.ssender = SmsSingleSender(appid, appkey)
+    def __init__(self, appid, app_key, template_id):
+        self.sms_sender = SmsSingleSender(appid, app_key)
         self.template_id = template_id
 
     def send_sms(self, name, phone_number, timeout: int = 3):
-        code = random_string(length=5)
+        code = random_string(string.digits, length=5)
         params = [code, str(timeout)]
         try:
-            self.ssender.send_with_param(
+            self.sms_sender.send_with_param(
                 86, phone_number,
                 self.template_id, params, '', '', '')
         except Exception as e:

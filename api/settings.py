@@ -62,17 +62,16 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'api.middlewares.EnhanceMiddleware',
+    'api.middleware.EnhanceMiddleware',
 ]
 
 # 3. 跨域访问配置
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ORIGIN_WHITELIST = (
+CORS_ORIGIN_WHITELIST = [
     'emilia.fun',
-    'localhost:8080',
-)
+]
 
 # 4. 模板配置
 TEMPLATES = [
@@ -93,28 +92,19 @@ TEMPLATES = [
 
 
 # 5.日志配置
-def info_filter_request(record):
-    """
-    向其他服务器发送 Request
-    """
-    if record.levelname == 'INFO' and record.koto == 'request':
+def filter_request(levelname, koto=None):
+    def _filter_request(record):
+        if record.levelname != levelname:
+            return False
+        if koto and record.koto != koto:
+            """
+            koto == request 表示向其他服务器发送 Request
+            koto == reponse 表示接受 Request 返回 Response
+            """
+            return False
         return True
-    return False
 
-
-def info_filter_response(record):
-    """
-    接受 Request 返回 Response
-    """
-    if record.levelname == 'INFO' and record.koto == 'response':
-        return True
-    return False
-
-
-def error_filter(record):
-    if record.levelname == 'ERROR':
-        return True
-    return False
+    return _filter_request
 
 
 LOGGING = {
@@ -127,7 +117,7 @@ LOGGING = {
             'level': 'DEBUG'
         },
         'api': {  # 项目内的 logger.info
-            'handlers': ['error_console', 'info_console_request', 'info_console_response'],
+            'handlers': ['error_console', 'warning_console', 'info_console_request', 'info_console_response'],
             'propagate': False,
             'level': 'DEBUG',
         }
@@ -152,6 +142,12 @@ LOGGING = {
             'formatter': 'info_verbose_request',
             'level': 'INFO',
         },
+        'warning_console': {
+            'class': 'logging.StreamHandler',
+            'filters': ['warning_filter'],
+            'formatter': 'warning_verbose',
+            'level': 'WARNING',
+        },
         'error_console': {
             'class': 'logging.StreamHandler',
             'filters': ['error_filter'],
@@ -171,7 +167,7 @@ LOGGING = {
             'format': '【处理请求】 {asctime}\n'
                       'duration: {duration}s\n'
                       'url: {message}\n'
-                      '{method}: {data}\n'
+                      '{method}: {request}\n'
                       'response: {response}\n',
             'style': '{',
         },
@@ -179,7 +175,15 @@ LOGGING = {
             'format': '【发送请求】 {asctime}\n'
                       'duration: {duration}s\n'
                       'url: {message}\n'
-                      '{method}: {data}\n'
+                      '{method}: {request}\n'
+                      'response: {response}\n',
+            'style': '{',
+        },
+        'warning_verbose': {
+            'format': '【警告】 {asctime}\n'
+                      'file: {filename}:{lineno}\n'
+                      'url: {message}\n'
+                      '{method}: {request}\n'
                       'response: {response}\n',
             'style': '{',
         },
@@ -187,8 +191,10 @@ LOGGING = {
             'format': '【错误】 {asctime}\n'
                       'file: {filename}:{lineno}\n'
                       'url: {message}\n'
-                      '{method}: {data}\n'
-                      'except: {except}',
+                      '{method}: {request}\n'
+                      '-----EXCEPT BEGIN-----\n'
+                      '{response}'
+                      '-----EXCEPT END-----\n',
             'style': '{',
         },
     },
@@ -201,15 +207,19 @@ LOGGING = {
         # },
         'info_filter_request': {
             '()': 'django.utils.log.CallbackFilter',
-            'callback': info_filter_request,
+            'callback': filter_request('INFO', 'request'),
         },
         'info_filter_response': {
             '()': 'django.utils.log.CallbackFilter',
-            'callback': info_filter_response,
+            'callback': filter_request('INFO', 'response'),
+        },
+        'warning_filter': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': filter_request('WARNING'),
         },
         'error_filter': {
             '()': 'django.utils.log.CallbackFilter',
-            'callback': error_filter,
+            'callback': filter_request('ERROR'),
         },
     },
 }
@@ -283,7 +293,7 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
+        'permission.permission.LoginPermission',
     ),
     # disable DRF Browsable Page
     'DEFAULT_RENDERER_CLASSES': (

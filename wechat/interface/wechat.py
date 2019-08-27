@@ -9,6 +9,7 @@ from Crypto.Cipher import AES
 from bs4 import BeautifulSoup
 from django.core.cache import cache
 
+from api.exception import ServiceError
 from api.shortcuts import Response
 from utils import random_string
 
@@ -77,7 +78,7 @@ class WechatOfficial:
             # # }
             # # return self.xml_generate(response)
         else:
-            return Response(1)
+            raise ServiceError('wechat request format error', code=500)
 
     @staticmethod
     def xml_analyse(xml):

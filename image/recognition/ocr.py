@@ -1,3 +1,4 @@
+from api.exception import ServiceError
 from api.shortcuts import Response
 from external.package import baidu
 
@@ -7,7 +8,7 @@ def general_ocr(request):
         url = request.POST['url']
         lang = request.POST['lang']
     except KeyError:
-        return Response(2)
+        raise ServiceError('Argument Error', code=400)
 
     try:
         result = baidu.ocr_basic(url, lang)['words_result']
@@ -17,4 +18,4 @@ def general_ocr(request):
     data = ''
     for i in result:
         data += f'{i["words"]}\n'
-    return Response(0, data=data)
+    return Response(request, 0, data=data)

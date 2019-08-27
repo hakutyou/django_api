@@ -1,9 +1,10 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-from rest_framework import generics
+from rest_framework import generics, exceptions
 from rest_framework_simplejwt import views
 
 import utils
+from api.exception import ClientError
 from api.shortcuts import Response
 from permission import permission
 from .serializer import UserSerializer, GroupSerializer
@@ -24,7 +25,7 @@ class UserView(generics.CreateAPIView):
             'username': request.user.username,
             'last_login': utils.get_time(request.user.last_login),
         }
-        return Response(0, data=data, view=True)
+        return Response(request, 0, data=data)
 
 
 user_view = UserView.as_view()
@@ -32,7 +33,10 @@ user_view = UserView.as_view()
 
 class LoginView(views.TokenObtainPairView):
     def post(self, request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)
+        try:
+            response = super().post(request, *args, **kwargs)
+        except exceptions.AuthenticationFailed:
+            raise ClientError('用户名或密码错误', code=401)
         UserSerializer.login(request.POST['username'])
         return response
 

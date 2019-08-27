@@ -2,6 +2,7 @@ from django.conf import settings
 from django.core import mail
 from rest_framework.decorators import permission_classes, api_view
 
+from api.exception import ServiceError
 from api.service import app
 from api.shortcuts import Response
 from permission import permission
@@ -23,8 +24,9 @@ def send_mail(request):
     message = request.POST.get('message')
     receive = request.POST.get('receive')
     if not (subject and message and receive):
-        return Response(2)
+        raise ServiceError('Argument Error', code=400)
     internal_send_mail(subject, message, [receive])
+    return Response(request, 0)
 
 
 # 给 api 内部调用
@@ -33,5 +35,5 @@ def internal_send_mail(subject, message, receive):
     ic = get_time(now(), time_format='%Y%m%d%H%M%S') + random_string(length=6)
     celery_stage(ic, _type, 0)
     celery_send_mail.delay(ic, _type, subject, message, receive)
-    print(celery_send_mail)
-    return Response(0, convert=True)
+    # print(celery_send_mail)
+    return
