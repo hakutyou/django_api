@@ -69,8 +69,8 @@ MIDDLEWARE = [
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ORIGIN_WHITELIST = [
-    'emilia.fun',
+CORS_ORIGIN_REGEX_WHITELIST = [
+    'https?://emilia.fun',
 ]
 
 # 4. 模板配置
