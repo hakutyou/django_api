@@ -3,6 +3,7 @@ PyJWT
 beautifulsoup4
 celery
 cos-python-sdk-v5
+django-cors-headers
 django-cors-middleware
 django-filter
 django_redis
