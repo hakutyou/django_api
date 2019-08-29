@@ -4,13 +4,12 @@ import socket
 import struct
 
 import requests
-import time
 from Crypto.Cipher import AES
 from bs4 import BeautifulSoup
 from django.core.cache import cache
+from django.views.decorators.csrf import csrf_exempt
 
 from api.exception import ServiceError
-from api.shortcuts import Response
 from utils import random_string
 
 
@@ -34,6 +33,7 @@ class WechatOfficial:
         self.appsecret = appsecret
         self.token = token
 
+    @csrf_exempt
     def verify_token(self, request):
         nonce = request.GET['nonce']
         data = {

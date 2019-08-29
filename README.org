@@ -9,12 +9,19 @@ cp script/debug.env .env
 # virtualenv --no-site-packages venv
 # source venv/bin/activate
 pip install -r requirements.txt
-python manage.py
+python manage.py runserver
 #+END_SRC
 
 ** Server Environment
 #+BEGIN_SRC bash
 cp script/product.env .env
+#+END_SRC
+
+
+** CSRF
+POST 请求才会验证 CSRF。禁用某个接口的 CSRF
+#+BEGIN_SRC python
+@csrf_exempt
 #+END_SRC
 
 

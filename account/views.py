@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+from django.middleware import csrf
 from rest_framework import generics, exceptions
 from rest_framework_simplejwt import views
 
@@ -37,6 +38,8 @@ class LoginView(views.TokenObtainPairView):
             response = super().post(request, *args, **kwargs)
         except exceptions.AuthenticationFailed:
             raise ClientError('用户名或密码错误', code=401)
+        token = csrf.get_token(request)
+        response.data['csrf_token'] = token
         UserSerializer.login(request.POST['username'])
         return response
 
