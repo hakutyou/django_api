@@ -22,7 +22,7 @@ def loop_deal_id(func):
 
         if isinstance(ids_list, int):
             request.pk = ids_list
-            return Response(request, 0, data=func(self, request, *args, **kargs))
+            return func(self, request, *args, **kargs)
         raise ServiceError('Argument Error', code=400)
 
     return wrapper
