@@ -1,14 +1,13 @@
-from api.exception import ServiceError, ClientError
-from api.shortcuts import Response
+from api.exception import ClientError
+from api.shortcuts import Response, request_check
 from external.package import baidu
 
 
+@request_check(
+    url=(str, True),
+)
 def general_recognition(request):
-    try:
-        url = request.POST['url']
-    except KeyError:
-        raise ServiceError('Argument Error', code=400)
-
+    url = request.post.get('url')
     try:
         result = baidu.image_detect(url)['result']
     except KeyError:

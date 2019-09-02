@@ -2,9 +2,8 @@ from django.conf import settings
 from django.core import mail
 from rest_framework.decorators import permission_classes, api_view
 
-from api.exception import ServiceError
 from api.service import app
-from api.shortcuts import Response
+from api.shortcuts import Response, request_check
 from permission import permission
 from utils import get_time, now, random_string
 from utils.celery import celery_stage, celery_catch
@@ -19,12 +18,15 @@ def celery_send_mail(self, subject, message, receive):
 
 @api_view(['POST'])
 @permission_classes((permission.LoginPermission,))
+@request_check(
+    subject=(str, True),
+    message=(str, True),
+    receive=(str, True),
+)
 def send_mail(request):
-    subject = request.POST.get('subject')
-    message = request.POST.get('message')
-    receive = request.POST.get('receive')
-    if not (subject and message and receive):
-        raise ServiceError('Argument Error', code=400)
+    subject = request.post.get('subject')
+    message = request.post.get('message')
+    receive = request.post.get('receive')
     internal_send_mail(subject, message, [receive])
     return Response(request, 0)
 

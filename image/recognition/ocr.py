@@ -1,15 +1,14 @@
-from api.exception import ServiceError
-from api.shortcuts import Response
+from api.shortcuts import Response, request_check
 from external.package import baidu
 
 
+@request_check(
+    url=(str, True),
+    lang=(str, True),
+)
 def general_ocr(request):
-    try:
-        url = request.POST['url']
-        lang = request.POST['lang']
-    except KeyError:
-        raise ServiceError('Argument Error', code=400)
-
+    url = request.post.get('url')
+    lang = request.post.get('lang')
     try:
         result = baidu.ocr_basic(url, lang)['words_result']
     except KeyError:

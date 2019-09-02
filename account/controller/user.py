@@ -1,22 +1,25 @@
 from django.contrib.auth import get_user_model
 from rest_framework.decorators import permission_classes, api_view
 
-from api.exception import ClientError, ServiceError
-from api.shortcuts import Response
+from api.exception import ClientError
+from api.shortcuts import Response, request_check
 from external.interface import tencent_sms_service
 from permission import permission
 
 UserModel = get_user_model()
 
 
+@request_check(
+    username=(str, True),
+    mobile=(int, True),
+    code=(str, True),
+    new_password=(str, True)
+)
 def reset_password(request):
-    username = request.POST.get('username')
-    mobile = request.POST.get('mobile')
-    new_password = request.POST.get('new_password')
-    code = request.POST.get('code')
-    if not (username and mobile and code and new_password):
-        raise ServiceError('Argument Error', code=400)
-
+    username = request.post.get('username')
+    mobile = request.post.get('mobile')
+    new_password = request.post.get('new_password')
+    code = request.post.get('code')
     try:
         user = UserModel.objects.get(username=username, mobile=mobile, is_active=1)
     except UserModel.DoesNotExist:
@@ -32,12 +35,13 @@ def reset_password(request):
 
 @api_view(['POST'])
 @permission_classes((permission.LoginPermission,))
+@request_check(
+    password=(str, True),
+    new_password=(str, True),
+)
 def modify_password(request):
-    password = request.POST.get('password')
-    new_password = request.POST.get('new_password')
-    if not (password and new_password):
-        raise ServiceError('Argument Error', code=400)
-
+    password = request.post.get('password')
+    new_password = request.post.get('new_password')
     if not request.user.check_password(password):
         raise ClientError('原密码错误', code=401)
 
