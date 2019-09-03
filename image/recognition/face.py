@@ -1,5 +1,5 @@
 from api.shortcuts import Response, request_check
-from external.interface import baidu_face_service
+from external.interface import baidu_face_service, tencent_ai_service
 
 
 @request_check(
@@ -10,6 +10,15 @@ def face_detect(request):
     url = request.post.get('url')
     field = request.post.get('field', '')
     result = baidu_face_service.face_detect(url, field)
+    return Response(request, 0, data=result)
+
+
+@request_check(
+    url=(str, True),
+)
+def tencent_face_detect(request):
+    url = request.post.get('url')
+    result = tencent_ai_service.face_detect(url)
     return Response(request, 0, data=result)
 
 

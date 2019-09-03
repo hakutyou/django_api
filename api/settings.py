@@ -358,7 +358,11 @@ VISION_SECRET = config('VISION_SECRET')
 OCR_CLIENT_ID = config('OCR_CLIENT_ID')
 OCR_SECRET = config('OCR_SECRET')
 
-# 13.4 腾讯 CoS
+# 13.4 腾讯 AI
+TENCENT_AI_APPID = config('TENCENT_AI_APPID')
+TENCENT_AI_APPKEY = config('TENCENT_AI_APPKEY')
+
+# 13.5 腾讯 CoS
 COS_BUCKET = config('COS_BUCKET')
 COS_ID = config('COS_ID')
 COS_KEY = config('COS_KEY')

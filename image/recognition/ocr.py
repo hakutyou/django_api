@@ -1,4 +1,5 @@
 from api.shortcuts import Response, request_check
+from external.interface import tencent_ai_service
 from external.package import baidu
 
 
@@ -17,4 +18,18 @@ def general_ocr(request):
     data = ''
     for i in result:
         data += f'{i["words"]}\n'
+    return Response(request, 0, data=data)
+
+
+@request_check(
+    url=(str, True),
+)
+def tencent_general_ocr(request):
+    url = request.post.get('url')
+    response = tencent_ai_service.ocr_general(url)
+    if response['msg'] != 'ok':
+        return Response(request, 0, _type='str', data=response['msg'])
+    data = []
+    for i in response['data']['item_list']:
+        data.append(i['itemstring'])
     return Response(request, 0, data=data)
