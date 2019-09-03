@@ -28,7 +28,7 @@ def tencent_general_ocr(request):
     url = request.post.get('url')
     response = tencent_ai_service.ocr_general(url)
     if response['msg'] != 'ok':
-        return Response(request, 0, _type='str', data=response['msg'])
+        return Response(request, 1, _type='str', data=response['msg'])
     data = []
     for i in response['data']['item_list']:
         data.append(i['itemstring'])

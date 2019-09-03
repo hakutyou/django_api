@@ -37,7 +37,7 @@ def Response(request, code=0, _type='dict', **kwargs):
     else:
         ret = kwargs.get('data', '')
         content_type = kwargs.get('content_type', 'text/plain')
-    status = _status_mapper.get(code, 500)
+    status = _status_mapper.get(code, 400)
     # logger
     time_cost = time.time() - request.time_begin
     # 格式化日志
