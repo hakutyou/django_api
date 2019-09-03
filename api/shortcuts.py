@@ -1,3 +1,4 @@
+import json
 import types
 
 import time
@@ -39,28 +40,37 @@ def Response(request, code=0, _type='dict', **kwargs):
     status = _status_mapper.get(code, 500)
     # logger
     time_cost = time.time() - request.time_begin
+    # 格式化日志
+    try:
+        request_post = request.post
+    except AttributeError:
+        request_post = json.dumps(request.POST.dict(), indent=4, ensure_ascii=False)
+    print_ret = ret
+    if isinstance(print_ret, dict):
+        print_ret = json.dumps(ret, indent=4, ensure_ascii=False)
+
     if code == 0:
         logger.info(f'{request.scheme}://{request.get_host()}{request.get_full_path()}',
                     extra={
                         'koto': 'response',
                         'duration': str(time_cost),
                         'method': request.method,
-                        'request': string_color(request.post, 'green'),
-                        'response': string_color(ret, 'pink'),
+                        'request': string_color(request_post, 'green'),
+                        'response': string_color(print_ret, 'pink'),
                     })
     elif code >= 1000:
         logger.error(f'{request.scheme}://{request.get_host()}{request.get_full_path()}',
                      extra={
                          'method': request.method,
-                         'request': string_color(request.post, 'yellow'),
+                         'request': string_color(request_post, 'yellow'),
                          'response': string_color(f'{kwargs["exception"]}\n{kwargs["traceback"]}', 'red')
                      })
     else:
         logger.warning(f'{request.scheme}://{request.get_host()}{request.get_full_path()}',
                        extra={
                            'method': request.method,
-                           'request': string_color(request.post, 'cyan'),
-                           'response': string_color(f'{ret}', 'yellow')
+                           'request': string_color(request_post, 'cyan'),
+                           'response': string_color(print_ret, 'yellow')
                        })
     return _type_mapper[_type](ret, status=status, content_type=content_type)
 

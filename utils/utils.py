@@ -57,7 +57,7 @@ def protect_dict(data: dict):
         return data
 
     for i in data:
-        if type(data[i]) == bytes:
+        if isinstance(data[i], bytes):
             data[i] = '<bytes>'
     return data
 

@@ -31,7 +31,53 @@ class BaiduFaceService(BaiduService):
         'completeness': lambda x: x == 0,
     }
 
-    def face_detect(self, url, field=None):
+    def face_verify(self, url, field=''):
+        """
+        在线活体检测
+        """
+        image_base64 = base64.b64encode(requests.get(url).content)
+        data = {
+            'image': image_base64,
+            'image_type': 'BASE64',
+            'face_field': field,
+            'option': 'COMMON',
+        }
+        response = self.post('/rest/2.0/face/v3/detect', data=data)
+        return response
+
+    def face_compare(self, url_1, url_2):
+        """
+        人脸对比
+        """
+        # image_base64_1 = base64.b64encode(requests.get(url_1).content)
+        # image_base64_2 = base64.b64encode(requests.get(url_2).content)
+        data = [
+            {
+                # 'image': image_base64_1,
+                # 'image_type': 'BASE64',
+                'image': url_1,
+                'image_type': 'URL',
+                'face_type': 'LIVE',
+                'quality_control': 'NORMAL',  # 图片质量控制
+                'liveness_control': 'NORMAL',  # 活体检测控制
+            },
+            {
+                # 'image': image_base64_2,
+                # 'image_type': 'BASE64',
+                'image': url_2,
+                'image_type': 'URL',
+                'face_type': 'LIVE',
+                'quality_control': 'NORMAL',  # 图片质量控制
+                'liveness_control': 'NORMAL',  # 活体检测控制
+            }
+        ]
+        response = self.post('/rest/2.0/face/v3/match', data=data)
+        return response
+
+    def face_detect(self, url, field=''):
+        """
+        人脸检测
+        """
         image_base64 = base64.b64encode(requests.get(url).content)
         face_field = 'quality,' + field
         data = {

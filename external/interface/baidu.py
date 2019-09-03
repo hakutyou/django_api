@@ -30,5 +30,5 @@ class BaiduService(BaseService):
             }
             response = self.post('/oauth/2.0/token', get_data=data, get_access=False)
             access_token = response['access_token']
-            cache.set('baidu:access_token', access_token, response['expires_in'] - 3600)
+            cache.set(f'baidu:access_token:{self.client_id}', access_token, response['expires_in'] - 3600)
         return access_token
