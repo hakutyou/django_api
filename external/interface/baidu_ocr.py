@@ -16,5 +16,5 @@ class BaiduOCRService(BaiduService):
             'detect_language': True,
             'probability': False,
         }
-        response = self.post('/rest/2.0/ocr/v1/general_basic', data=data)
+        response = self.post('rest/2.0/ocr/v1/general_basic', data=data)
         return response

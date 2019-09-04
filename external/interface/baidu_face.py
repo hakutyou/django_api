@@ -2,7 +2,9 @@ import base64
 
 import requests
 
+from api.exception import ClientError
 from external.interface.baidu import BaiduService
+from utils import random_string
 
 
 class BaiduFaceService(BaiduService):
@@ -42,7 +44,7 @@ class BaiduFaceService(BaiduService):
             'face_field': field,
             'option': 'COMMON',
         }
-        response = self.post('/rest/2.0/face/v3/detect', data=data)
+        response = self.post('rest/2.0/face/v3/detect', data=data)
         return response
 
     def face_compare(self, url_1, url_2):
@@ -71,7 +73,7 @@ class BaiduFaceService(BaiduService):
                 'liveness_control': 'NORMAL',  # 活体检测控制
             }
         ]
-        response = self.post('/rest/2.0/face/v3/match', data=data)
+        response = self.post('rest/2.0/face/v3/match', data=data)
         return response
 
     def face_detect(self, url, field=''):
@@ -81,13 +83,13 @@ class BaiduFaceService(BaiduService):
         image_base64 = base64.b64encode(requests.get(url).content)
         face_field = 'quality,' + field
         data = {
-            'image': image_base64,
+            'image': url,
             'image_type': 'BASE64',
             'face_field': face_field,
             'face_type': 'LIVE',
             'liveness_control': 'NORMAL',
         }
-        response = self.post('/rest/2.0/face/v3/detect', data=data)
+        response = self.post('rest/2.0/face/v3/detect', data=data)
         if response['result']:
             face_list = response['result']['face_list']
             count = 0
@@ -114,3 +116,46 @@ class BaiduFaceService(BaiduService):
                     }
                 count += 1
         return response
+
+    def user_add(self, image_base64, user_name, group_id='default', user_id=None):
+        user_id = user_id or random_string()
+        data = {
+            'image': image_base64,
+            'image_type': 'BASE64',
+            'group_id': group_id,
+            'user_id': user_id,
+            'user_info': user_name,
+        }
+        response = self.post('rest/2.0/face/v3/faceset/user/add', data=data)
+        if response['error_msg'] != 'SUCCESS':
+            raise ClientError(response['msg'], code=1)
+        return response['result']
+
+    def user_remove(self, user_id, group_id='default'):
+        face_token = None
+        data = {
+            'user_id': user_id,
+            'group_id': group_id,
+            'face_token': face_token
+        }
+        response = self.post('rest/2.0/face/v3/faceset/face/delete', data=data)
+        return response
+
+    def user_search(self, image_base64, group_id='default'):
+        data = {
+            'image': image_base64,
+            'image_type': 'BASE64',
+            'group_id_list': [group_id],
+        }
+        response = self.post('rest/2.0/face/v3/search', data=data)
+        if response['error_msg'] != 'SUCCESS':
+            return {
+                'msg': response['error_msg']
+            }
+        candidates = response['result']['user_list']
+        if candidates:
+            return {
+                'user_id': candidates[0]['user_id'],
+                'score': candidates[0]['score'],
+            }
+        return {}

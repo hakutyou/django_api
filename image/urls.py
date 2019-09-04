@@ -10,9 +10,9 @@ urlpatterns = [
     url(r'^face_verify$', face.face_verify),
     url(r'^face_compare$', face.face_compare),
 
-    url(r'^tencent/face_add$', face.face_add),
+    url(r'^tencent/face_add$', face.user_add),
     url(r'^tencent/face_del$', face.face_del),
-    url(r'^tencent/face_identify$', face.face_identify),
+    url(r'^tencent/face_identify$', face.user_search),
     url(r'^tencent/face_list$', face.face_list),
 
     url(r'^ocr$', ocr.general_ocr),

@@ -4,7 +4,6 @@ import requests
 
 from api.exception import ClientError
 from external.interface.tencent import TencentService
-from image.models import FaceUser
 from utils import random_string
 
 
@@ -20,9 +19,8 @@ class TencentFaceService(TencentService):
             raise ClientError(response['msg'], code=1)
         return response['data']
 
-    def face_newperson(self, url, person_name, group_id='default', person_id=None):
+    def user_add(self, image_base64, person_name, group_id='default', person_id=None):
         person_id = person_id or random_string()
-        image_base64 = base64.b64encode(requests.get(url).content)
         data = {
             'group_ids': group_id,
             'person_id': person_id,
@@ -32,29 +30,31 @@ class TencentFaceService(TencentService):
         response = self.post('fcgi-bin/face/face_newperson', data=data)
         if response['msg'] != 'ok':
             raise ClientError(response['msg'], code=1)
-        FaceUser.objects.create(user_name=person_name, user_id=person_id,
-                                face_image=url, group_id=group_id)
         return response['data']
 
-    def face_delperson(self, person_id):
+    def user_remove(self, user_id):
         data = {
-            'person_id': person_id,
+            'person_id': user_id,
         }
         response = self.post('fcgi-bin/face/face_delperson', data=data)
-        FaceUser.objects.get(user_id=person_id).delete()
         return response
 
-    def face_idperson(self, url, group_id='default'):
-        image_base64 = base64.b64encode(requests.get(url).content)
+    def user_search(self, image_base64, group_id='default'):
         data = {
             'image': image_base64,
             'group_id': group_id,
-            'topn': 5,
+            'topn': 1,
         }
         response = self.post('fcgi-bin/face/face_faceidentify', data=data)
         if response['msg'] != 'ok':
             raise ClientError(response['msg'], code=1)
-        return response['data']
+        candidates = response['data']['candidates']
+        if candidates:
+            return {
+                'user_id': candidates[0]['person_id'],
+                'score': candidates[0]['confidence'],
+            }
+        return {}
 
     def face_listperson(self, group_id='default'):
         data = {

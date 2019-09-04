@@ -4,7 +4,7 @@ from external.interface.base import BaseService
 
 
 class BaiduService(BaseService):
-    base_url = 'https://aip.baidubce.com'
+    base_url = 'https://aip.baidubce.com/'
 
     def __init__(self, client_id, client_secret):
         self.client_id = client_id
@@ -28,7 +28,7 @@ class BaiduService(BaseService):
                 'client_id': self.client_id,
                 'client_secret': self.client_secret,
             }
-            response = self.post('/oauth/2.0/token', get_data=data, get_access=False)
+            response = self.post('oauth/2.0/token', get_data=data, get_access=False)
             access_token = response['access_token']
             cache.set(f'baidu:access_token:{self.client_id}', access_token, response['expires_in'] - 3600)
         return access_token

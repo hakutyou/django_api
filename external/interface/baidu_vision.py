@@ -11,5 +11,5 @@ class BaiduVisionService(BaiduService):
         data = {
             'image': image_base64,
         }
-        response = self.post('/rest/2.0/image-classify/v2/advanced_general', data=data)
+        response = self.post('rest/2.0/image-classify/v2/advanced_general', data=data)
         return response
