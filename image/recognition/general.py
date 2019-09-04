@@ -1,6 +1,6 @@
 from api.exception import ClientError
 from api.shortcuts import Response, request_check
-from external.package import baidu
+from external.interface import baidu_vision_service
 
 
 @request_check(
@@ -9,7 +9,7 @@ from external.package import baidu
 def general_recognition(request):
     url = request.post.get('url')
     try:
-        result = baidu.image_detect(url)['result']
+        result = baidu_vision_service.image_detect(url)['result']
     except KeyError:
         raise ClientError('图片格式错误')
 

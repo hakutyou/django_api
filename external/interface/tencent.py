@@ -25,6 +25,5 @@ class TencentService(BaseService):
         sorted_values = sorted(data.items(), key=lambda val: val[0])
         _montage = parse.urlencode(sorted_values)
         _montage += f'&app_key={self.app_key}'
-        print(_montage)
         data['sign'] = hashlib.md5(_montage.encode('utf-8')).hexdigest().upper()
         return

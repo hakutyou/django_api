@@ -1,6 +1,5 @@
 from api.shortcuts import Response, request_check
-from external.interface import tencent_ai_service
-from external.package import baidu
+from external.interface import tencent_ocr_service, baidu_ocr_service
 
 
 @request_check(
@@ -11,7 +10,7 @@ def general_ocr(request):
     url = request.post.get('url')
     lang = request.post.get('lang')
     try:
-        result = baidu.ocr_basic(url, lang)['words_result']
+        result = baidu_ocr_service.ocr_basic(url, lang)['words_result']
     except KeyError:
         return Response(0, data='图片格式错误')
 
@@ -26,7 +25,7 @@ def general_ocr(request):
 )
 def tencent_general_ocr(request):
     url = request.post.get('url')
-    response = tencent_ai_service.ocr_general(url)
+    response = tencent_ocr_service.ocr_general(url)
     if response['msg'] != 'ok':
         return Response(request, 1, _type='str', data=response['msg'])
     data = []

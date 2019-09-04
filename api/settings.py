@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'account',
     'external',
     'qcloud',
+    'image',
     'record',
     # 'mongolog',
 ]
