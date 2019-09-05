@@ -1,0 +1,3 @@
+[submodule "script"]
+	path = script
+	url = git@git.dev.tencent.com:hakutyou/api_script.git

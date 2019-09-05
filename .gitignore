@@ -5,7 +5,6 @@
 test.py
 */migrations/*
 !*/migrations/__init__.py
-script/*
 *.pyc
 *.pyo
 *.swp

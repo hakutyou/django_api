@@ -35,3 +35,21 @@ PyCharm 无法连接尝试使用以下 URL 确定时区信息
 #+BEGIN_EXAMPLE
 jdbc:mysql://localhost:3306/api?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
 #+END_EXAMPLE
+
+* Git 相关
+** 删除文件，包括历史记录
+#+BEGIN_SRC bash
+git filter-branch --force --index-filter 'git rm --cached $FILE' --prune-empty --tag-name-filter cat -- --all
+git push origin master --force
+# 清理回收本地 .git 空间
+rm -rf .git/refs/original/
+git reflog expire --expire=now --all
+git gc --prune=now
+git gc --aggressive --prune=now
+#+END_SRC
+
+** 添加子项目
+#+BEGIN_SRC bash
+git submodule init
+git submodule add git@git.dev.tencent.com:hakutyou/api_script.git script
+#+END_SRC
