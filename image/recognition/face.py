@@ -52,9 +52,9 @@ def face_compare(request):
 )
 def user_add(request):
     url = request.post.get('url')
-    person_name = request.post.get('name')
+    user_name = request.post.get('user_name')
     # 录入
-    result = face_service.user_add(url=url, person_name=person_name)
+    result = face_service.user_add(url=url, user_name=user_name)
     return Response(request, 0, data=result)
 
 

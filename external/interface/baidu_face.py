@@ -4,6 +4,7 @@ import requests
 
 from api.exception import ClientError
 from external.interface.baidu import BaiduService
+from image.models import FaceUser
 from utils import random_string
 
 
@@ -83,7 +84,7 @@ class BaiduFaceService(BaiduService):
         image_base64 = base64.b64encode(requests.get(url).content)
         face_field = 'quality,' + field
         data = {
-            'image': url,
+            'image': image_base64,
             'image_type': 'BASE64',
             'face_field': face_field,
             'face_type': 'LIVE',
@@ -132,11 +133,14 @@ class BaiduFaceService(BaiduService):
         return response['result']
 
     def user_remove(self, user_id, group_id='default'):
-        face_token = None
+        try:
+            user = FaceUser.objects.get(user_id=user_id, group_id=group_id)
+        except FaceUser.DoesNotExist:
+            return {}
         data = {
             'user_id': user_id,
             'group_id': group_id,
-            'face_token': face_token
+            'face_token': user.face_token
         }
         response = self.post('rest/2.0/face/v3/faceset/face/delete', data=data)
         return response

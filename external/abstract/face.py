@@ -28,14 +28,15 @@ class FaceService:
         image_base64 = base64.b64encode(requests.get(url).content)
         try:
             self.tencent_face_service.user_add(image_base64, user_name, group_id, user_id)
-            self.baidu_face_service.user_add(image_base64, user_name, group_id, user_id)
+            baidu_response = self.baidu_face_service.user_add(image_base64, user_name, group_id, user_id)
+            face_token = baidu_response['face_token']
         except ClientError as c:
-            # TODO: baidu_delperson
+            self.baidu_face_service.user_remove(user_id, group_id)
             self.tencent_face_service.user_remove(user_id)
             raise ClientError(c.response, c.code)
 
         FaceUser.objects.create(user_name=user_name, user_id=user_id,
-                                face_image=url, group_id=group_id)
+                                face_image=url, group_id=group_id, face_token=face_token)
         return {
             'user_id': user_id,
             'group_id': group_id,
