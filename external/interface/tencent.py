@@ -23,6 +23,7 @@ class TencentService(BaseService):
 
     def sign(self, data):
         sorted_values = sorted(data.items(), key=lambda val: val[0])
+        sorted_values = list(filter(lambda x: x[1] is not None, sorted_values))
         _montage = parse.urlencode(sorted_values)
         _montage += f'&app_key={self.app_key}'
         data['sign'] = hashlib.md5(_montage.encode('utf-8')).hexdigest().upper()

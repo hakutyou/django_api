@@ -29,7 +29,7 @@ class TencentFaceService(TencentService):
         }
         response = self.post('fcgi-bin/face/face_newperson', data=data)
         if response['msg'] != 'ok':
-            raise ClientError(response['msg'], code=1)
+            return False
         return response['data']
 
     def user_remove(self, user_id):
@@ -47,14 +47,14 @@ class TencentFaceService(TencentService):
         }
         response = self.post('fcgi-bin/face/face_faceidentify', data=data)
         if response['msg'] != 'ok':
-            raise ClientError(response['msg'], code=1)
+            return response['msg']
         candidates = response['data']['candidates']
         if candidates:
             return {
                 'user_id': candidates[0]['person_id'],
                 'score': candidates[0]['confidence'],
             }
-        return {}
+        return None
 
     def face_listperson(self, group_id='default'):
         data = {

@@ -2,7 +2,6 @@ import base64
 
 import requests
 
-from api.exception import ClientError
 from external.interface.baidu import BaiduService
 from image.models import FaceUser
 from utils import random_string
@@ -129,18 +128,19 @@ class BaiduFaceService(BaiduService):
         }
         response = self.post('rest/2.0/face/v3/faceset/user/add', data=data)
         if response['error_msg'] != 'SUCCESS':
-            raise ClientError(response['msg'], code=1)
+            return False
         return response['result']
 
     def user_remove(self, user_id, group_id='default'):
         try:
             user = FaceUser.objects.get(user_id=user_id, group_id=group_id)
+            face_token = user.face_token
         except FaceUser.DoesNotExist:
-            return {}
+            return False
         data = {
             'user_id': user_id,
             'group_id': group_id,
-            'face_token': user.face_token
+            'face_token': face_token
         }
         response = self.post('rest/2.0/face/v3/faceset/face/delete', data=data)
         return response
@@ -153,9 +153,7 @@ class BaiduFaceService(BaiduService):
         }
         response = self.post('rest/2.0/face/v3/search', data=data)
         if response['error_msg'] != 'SUCCESS':
-            return {
-                'msg': response['error_msg']
-            }
+            return response['error_msg']
         candidates = response['result']['user_list']
         if candidates:
             return {

@@ -21,22 +21,22 @@ class FaceService:
         # 检测人脸重复
         search = self.user_search(url)
         for i in search:
-            if search[i] and search[i].get('score', 0) > 80:
+            if isinstance(search[i], dict) and search[i].get('score', 0) > 80:
                 raise ClientError('人脸已经存在', 1)
         # 录入人脸
         user_id = user_id or random_string()
         image_base64 = base64.b64encode(requests.get(url).content)
-        try:
-            self.tencent_face_service.user_add(image_base64, user_name, group_id, user_id)
-            baidu_response = self.baidu_face_service.user_add(image_base64, user_name, group_id, user_id)
-            face_token = baidu_response['face_token']
-        except ClientError as c:
-            self.baidu_face_service.user_remove(user_id, group_id)
+
+        tencent_response = self.tencent_face_service.user_add(image_base64, user_name, group_id, user_id)
+        if not tencent_response:
+            raise ClientError('腾讯录入失败', 1)
+        baidu_response = self.baidu_face_service.user_add(image_base64, user_name, group_id, user_id)
+        if not baidu_response:
             self.tencent_face_service.user_remove(user_id)
-            raise ClientError(c.response, c.code)
+            raise ClientError('百度录入失败', 1)
 
         FaceUser.objects.create(user_name=user_name, user_id=user_id,
-                                face_image=url, group_id=group_id, face_token=face_token)
+                                face_image=url, group_id=group_id, face_token=baidu_response['face_token'])
         return {
             'user_id': user_id,
             'group_id': group_id,

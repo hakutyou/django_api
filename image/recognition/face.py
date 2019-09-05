@@ -48,7 +48,7 @@ def face_compare(request):
 
 @request_check(
     url=(str, True),
-    name=(str, True),
+    user_name=(str, True),
 )
 def user_add(request):
     url = request.post.get('url')
@@ -61,7 +61,7 @@ def user_add(request):
 @request_check(
     user_id=(str, True),
 )
-def face_del(request):
+def user_remove(request):
     user_id = request.post.get('user_id')
     try:
         result = face_service.user_remove(user_id)
