@@ -1,26 +1,13 @@
-import base64
-
-import requests
-
 from api.exception import ClientError
 from external.interface.tencent import TencentService
+from external.interface.virtual_face import VirtualFace
 from utils import random_string
 
 
-class TencentFaceService(TencentService):
-    def face_detect(self, url, mode=1):
-        """
-        不适用腾讯的人脸检测，很容易返回 image size too big
-        """
-        image_base64 = base64.b64encode(requests.get(url).content)
-        data = {
-            'image': image_base64.decode(),
-            'mode': mode,
-        }
-        response = self.post('fcgi-bin/face/face_detectface', data=data)
-        if response['msg'] != 'ok':
-            return response['msg']
-        return response['data']
+class TencentFaceService(TencentService, VirtualFace):
+    # 不适用腾讯的人脸检测，很容易返回 image size too big
+    def face_detect(self, url):
+        return True
 
     def user_add(self, image_base64, person_name, group_id='default', person_id=None):
         person_id = person_id or random_string()

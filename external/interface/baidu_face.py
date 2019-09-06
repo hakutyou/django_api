@@ -3,11 +3,12 @@ import base64
 import requests
 
 from external.interface.baidu import BaiduService
+from external.interface.virtual_face import VirtualFace
 from image.models import FaceUser
 from utils import random_string
 
 
-class BaiduFaceService(BaiduService):
+class BaiduFaceService(BaiduService, VirtualFace):
     detect_occlusion = {
         'left_eye': lambda x: x > 0.6,
         'right_eye': lambda x: x > 0.6,
@@ -76,7 +77,7 @@ class BaiduFaceService(BaiduService):
         response = self.post('rest/2.0/face/v3/match', data=data)
         return response
 
-    def face_detect(self, url, field=''):
+    def face_detect(self, url, field: str = ''):
         """
         人脸检测
         """

@@ -1,3 +1,5 @@
+from typing import Union
+
 from django.core.cache import cache
 
 from external.interface.base import BaseService
@@ -10,7 +12,7 @@ class BaiduService(BaseService):
         self.client_id = client_id
         self.client_secret = client_secret
 
-    def post(self, interface, data=None, get_data=None, get_access=True):
+    def post(self, interface: str, data: Union[dict, list] = None, get_data: dict = None, get_access: bool = True):
         interface = f'{interface}?'
         if get_access:
             interface += f'access_token={self.access_token}&'
@@ -20,7 +22,7 @@ class BaiduService(BaseService):
         return super(BaiduService, self).post(interface, data).json()
 
     @property
-    def access_token(self):
+    def access_token(self) -> str:
         access_token = cache.get(f'baidu:access_token:{self.client_id}')
         if not access_token:
             data = {

@@ -1,4 +1,5 @@
 import json
+from typing import Union
 
 import requests
 import time
@@ -10,7 +11,7 @@ from utils import string_color, protect_dict
 class BaseService:
     base_url = ''
 
-    def post(self, interface, data=None):
+    def post(self, interface: str, data: Union[dict, list] = None):
         url = f'{self.base_url}{interface}'
 
         if isinstance(data, list):
