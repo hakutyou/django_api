@@ -1,12 +1,11 @@
 from api.shortcuts import Response, request_check
-from external.abstract import face_service
-from external.interface import baidu_face_service, tencent_face_service
+from external.interface import face_service
 from image.models import FaceUser
 
 
 @request_check(
     url=(str, True),
-    field=(str, False),
+    # field=(str, False),
 )
 def face_detect(request):
     url = request.post.get('url')
@@ -17,21 +16,12 @@ def face_detect(request):
 
 @request_check(
     url=(str, True),
-)
-def tencent_face_detect(request):
-    url = request.post.get('url')
-    result = tencent_face_service.face_detect(url)
-    return Response(request, 0, data=result)
-
-
-@request_check(
-    url=(str, True),
-    field=(str, False),
+    # field=(str, False),
 )
 def face_verify(request):
     url = request.post.get('url')
-    field = request.post.get('field', '')
-    result = baidu_face_service.face_verify(url, field)
+    # field = request.post.get('field', '')
+    result = face_service.face_verify(url)
     return Response(request, 0, data=result)
 
 
@@ -42,7 +32,7 @@ def face_verify(request):
 def face_compare(request):
     url_1 = request.post.get('url_1')
     url_2 = request.post.get('url_2')
-    result = baidu_face_service.face_compare(url_1, url_2)
+    result = face_service.face_compare(url_1, url_2)
     return Response(request, 0, data=result)
 
 
@@ -79,6 +69,6 @@ def user_search(request):
     return Response(request, 0, data=result)
 
 
-def face_list(request):
-    result = tencent_face_service.face_listperson()
+def user_list(request):
+    result = face_service.user_list()
     return Response(request, 0, data=result)

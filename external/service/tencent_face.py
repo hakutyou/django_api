@@ -1,13 +1,11 @@
 from api.exception import ClientError
-from external.interface.tencent import TencentService
-from external.interface.virtual_face import VirtualFace
 from utils import random_string
+from .tencent import TencentService
+from .virtual_face import VirtualFace
 
 
 class TencentFaceService(TencentService, VirtualFace):
-    # 不适用腾讯的人脸检测，很容易返回 image size too big
-    def face_detect(self, url):
-        return True
+    # 不使用腾讯的人脸检测，很容易返回 image size too big
 
     def user_add(self, image_base64, person_name, group_id='default', person_id=None):
         person_id = person_id or random_string()
@@ -46,11 +44,11 @@ class TencentFaceService(TencentService, VirtualFace):
             }
         return None
 
-    def face_listperson(self, group_id='default'):
+    def user_list(self, group_id='default'):
         data = {
             'group_id': group_id,
         }
         response = self.post('fcgi-bin/face/face_getpersonids', data=data)
         if response['msg'] != 'ok':
             raise ClientError(response['msg'], code=1)
-        return response['data']
+        return response['data']['person_ids']

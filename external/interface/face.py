@@ -4,7 +4,7 @@ import requests
 from django.conf import settings
 
 from api.exception import ClientError
-from external.interface import tencent_face, baidu_face
+from external.service import tencent_face, baidu_face
 from image.models import FaceUser
 from utils import random_string
 
@@ -21,7 +21,6 @@ class FaceService:
         }
 
     def face_detect(self, url):
-        # 腾讯的测试不支持大图
         data = {}
         for i in self.face_service_list:
             data[i] = self.face_service_list[i].face_detect(url)
@@ -89,3 +88,21 @@ class FaceService:
                     'score': int(sum(score) / len(score))
                 }
         return False
+
+    def user_list(self) -> dict:
+        ret = {}
+        for i in self.face_service_list:
+            ret[i] = self.face_service_list[i].user_list()
+        return ret
+
+    def face_verify(self, url) -> dict:
+        ret = {}
+        for i in self.face_service_list:
+            ret[i] = self.face_service_list[i].face_verify(url)
+        return ret
+
+    def face_compare(self, url1, url2) -> dict:
+        ret = {}
+        for i in self.face_service_list:
+            ret[i] = self.face_service_list[i].face_compare(url1, url2)
+        return ret

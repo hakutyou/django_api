@@ -2,7 +2,7 @@ from typing import Union
 
 from django.core.cache import cache
 
-from external.interface.base import BaseService
+from .base import BaseService
 
 
 class BaiduService(BaseService):

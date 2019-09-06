@@ -4,8 +4,8 @@ from urllib import parse
 
 import time
 
-from external.interface.base import BaseService
 from utils import random_string
+from .base import BaseService
 
 
 class TencentService(BaseService):

@@ -39,6 +39,9 @@ def Response(request, code=0, _type='dict', **kwargs):
         content_type = kwargs.get('content_type', 'text/plain')
     status = _status_mapper.get(code, 400)
     # logger
+    print('---------------')
+    print(request)
+    print('---------------')
     time_cost = time.time() - request.time_begin
     # 格式化日志
     try:

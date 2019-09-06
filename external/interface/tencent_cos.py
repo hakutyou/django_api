@@ -1,5 +1,4 @@
-from qcloud_cos import CosConfig
-from qcloud_cos import CosS3Client
+from qcloud_cos import CosConfig, CosS3Client
 
 
 class TencentCoSService:

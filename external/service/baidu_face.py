@@ -2,10 +2,10 @@ import base64
 
 import requests
 
-from external.interface.baidu import BaiduService
-from external.interface.virtual_face import VirtualFace
 from image.models import FaceUser
 from utils import random_string
+from .baidu import BaiduService
+from .virtual_face import VirtualFace
 
 
 class BaiduFaceService(BaiduService, VirtualFace):
@@ -35,9 +35,6 @@ class BaiduFaceService(BaiduService, VirtualFace):
     }
 
     def face_verify(self, url, field=''):
-        """
-        在线活体检测
-        """
         image_base64 = base64.b64encode(requests.get(url).content)
         data = {
             'image': image_base64,
@@ -49,9 +46,6 @@ class BaiduFaceService(BaiduService, VirtualFace):
         return response
 
     def face_compare(self, url_1, url_2):
-        """
-        人脸对比
-        """
         # image_base64_1 = base64.b64encode(requests.get(url_1).content)
         # image_base64_2 = base64.b64encode(requests.get(url_2).content)
         data = [
@@ -78,9 +72,6 @@ class BaiduFaceService(BaiduService, VirtualFace):
         return response
 
     def face_detect(self, url, field: str = ''):
-        """
-        人脸检测
-        """
         image_base64 = base64.b64encode(requests.get(url).content)
         face_field = 'quality,' + field
         data = {

@@ -2,7 +2,7 @@ import base64
 
 import requests
 
-from external.interface.baidu import BaiduService
+from .baidu import BaiduService
 
 
 class BaiduVisionService(BaiduService):
@@ -11,5 +11,6 @@ class BaiduVisionService(BaiduService):
         data = {
             'image': image_base64,
         }
-        response = self.post('rest/2.0/image-classify/v2/advanced_general', data=data)
-        return response
+        response = self.post('rest/2.0/image-classify/v2/advanced_general', data=data)['result']
+        max_ret = max(response, key=lambda x: x['score'])
+        return max_ret
