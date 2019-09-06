@@ -9,6 +9,9 @@ from utils import random_string
 
 class TencentFaceService(TencentService):
     def face_detect(self, url, mode=1):
+        """
+        不适用腾讯的人脸检测，很容易返回 image size too big
+        """
         image_base64 = base64.b64encode(requests.get(url).content)
         data = {
             'image': image_base64.decode(),
@@ -16,7 +19,7 @@ class TencentFaceService(TencentService):
         }
         response = self.post('fcgi-bin/face/face_detectface', data=data)
         if response['msg'] != 'ok':
-            raise ClientError(response['msg'], code=1)
+            return response['msg']
         return response['data']
 
     def user_add(self, image_base64, person_name, group_id='default', person_id=None):

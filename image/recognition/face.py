@@ -10,8 +10,8 @@ from image.models import FaceUser
 )
 def face_detect(request):
     url = request.post.get('url')
-    field = request.post.get('field', '')
-    result = baidu_face_service.face_detect(url, field)
+    # field = request.post.get('field', '')
+    result = face_service.face_detect(url)
     return Response(request, 0, data=result)
 
 

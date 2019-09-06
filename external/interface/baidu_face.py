@@ -90,31 +90,30 @@ class BaiduFaceService(BaiduService):
             'liveness_control': 'NORMAL',
         }
         response = self.post('rest/2.0/face/v3/detect', data=data)
-        if response['result']:
-            face_list = response['result']['face_list']
-            count = 0
-            for face_item in face_list:
-                quality = face_item['quality']
+        result = response.get('result')
+        if not result:
+            return False
 
-                error_response = []
-                for i in self.detect_angle:
-                    if self.detect_angle[i](face_item['angle'][i]):
-                        error_response.append(i)
-                for i in self.detect_occlusion:
-                    if self.detect_occlusion[i](quality['occlusion'][i]):
-                        error_response.append(i)
-                for i in self.detect_location:
-                    if self.detect_location[i](face_item['location'][i]):
-                        error_response.append(i)
-                for i in self.detect_quality:
-                    if self.detect_quality[i](quality[i]):
-                        error_response.append(i)
-
-                if error_response:
-                    face_list[count] = {
-                        'error': error_response,
-                    }
-                count += 1
+        face_list = result.get('face_list', [])
+        count = 0
+        for face_item in face_list:
+            quality = face_item['quality']
+            error_response = []
+            for i in self.detect_angle:
+                if self.detect_angle[i](face_item['angle'][i]):
+                    error_response.append(i)
+            for i in self.detect_occlusion:
+                if self.detect_occlusion[i](quality['occlusion'][i]):
+                    error_response.append(i)
+            for i in self.detect_location:
+                if self.detect_location[i](face_item['location'][i]):
+                    error_response.append(i)
+            for i in self.detect_quality:
+                if self.detect_quality[i](quality[i]):
+                    error_response.append(i)
+            if error_response:
+                return False
+            count += 1
         return response
 
     def user_add(self, image_base64, user_name, group_id='default', user_id=None):
