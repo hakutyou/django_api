@@ -1,8 +1,11 @@
+from django.views.decorators.csrf import csrf_exempt
+
 from api.exception import ClientError
 from api.shortcuts import Response, request_check
 from external.interface import vision_service
 
 
+@csrf_exempt
 @request_check(
     url=(str, True),
 )

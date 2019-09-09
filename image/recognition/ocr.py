@@ -1,7 +1,10 @@
+from django.views.decorators.csrf import csrf_exempt
+
 from api.shortcuts import Response, request_check
 from external.interface import ocr_service
 
 
+@csrf_exempt
 @request_check(
     url=(str, True),
     lang=(str, True),
