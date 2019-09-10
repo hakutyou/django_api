@@ -12,4 +12,5 @@ urlpatterns = [
     url(r'^password/reset/$', user.reset_password),
     url(r'^password/modify/$', user.modify_password),
     url(r'^refresh/$', jwt_views.token_refresh),
+    url(r'login/get', user.login_get),
 ]

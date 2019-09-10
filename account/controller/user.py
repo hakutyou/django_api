@@ -48,3 +48,13 @@ def modify_password(request):
     request.user.set_password(new_password)
     request.user.save()
     return Response(request, 0)
+
+
+@request_check(
+    username=(str, True)
+)
+def login_get(request):
+    username = request.post.get('username')
+    if username == 'hakutyou':
+        return Response(request, 0)
+    return Response(request, 1, msg='认证失败')
