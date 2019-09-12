@@ -258,7 +258,7 @@ CACHES = {
         'TIMEOUT': 604800,  # 7 days
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            # "PASSWORD": "secret"
+            "PASSWORD": config("REDIS_PASSWORD")
         }
     }
 }
