@@ -17,6 +17,7 @@ mysqlclient
 pycryptodome
 pysha3
 python-decouple
+python-json-logger
 qcloudsms_py
 redis
 requests

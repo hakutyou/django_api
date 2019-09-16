@@ -14,6 +14,7 @@ import datetime
 import os
 
 from decouple import config
+from pythonjsonlogger import jsonlogger
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -110,15 +111,15 @@ def filter_request(levelname, koto=None):
 
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': False,  # True 表示禁用日志
+    'disable_existing_loggers': True,
     'loggers': {  # 5.1 总览
-        'django.db.backends': {
-            'handlers': ['sql'],
-            'propagate': False,
-            'level': 'DEBUG'
-        },
+        # 'django.db.backends': {
+        #     'handlers': ['sql'],
+        #     'propagate': False,
+        #     'level': 'DEBUG'
+        # },
         'api': {  # 项目内的 logger.info
-            'handlers': ['error_console', 'warning_console', 'info_console_request', 'info_console_response'],
+            'handlers': ['error_console', 'warning_console', 'info_console_json'],
             'propagate': False,
             'level': 'DEBUG',
         }
@@ -131,28 +132,22 @@ LOGGING = {
             'formatter': 'sql',
             'level': 'DEBUG',
         },
-        'info_console_response': {
+        'info_console_json': {
             'class': 'logging.StreamHandler',
-            'filters': ['info_filter_response'],
-            'formatter': 'info_verbose_response',
-            'level': 'INFO',
-        },
-        'info_console_request': {
-            'class': 'logging.StreamHandler',
-            'filters': ['info_filter_request'],
-            'formatter': 'info_verbose_request',
+            'filters': ['info_filter'],
+            'formatter': 'json_verbose',
             'level': 'INFO',
         },
         'warning_console': {
             'class': 'logging.StreamHandler',
             'filters': ['warning_filter'],
-            'formatter': 'warning_verbose',
+            'formatter': 'json_verbose',
             'level': 'WARNING',
         },
         'error_console': {
             'class': 'logging.StreamHandler',
             'filters': ['error_filter'],
-            'formatter': 'error_verbose',
+            'formatter': 'json_verbose',
             'level': 'ERROR',
         },
     },
@@ -162,41 +157,10 @@ LOGGING = {
                       'duration: {duration}s\n'
                       'sql: {sql}\n'
                       'params: {params}\n',
-            'style': '{'
-        },
-        'info_verbose_response': {
-            'format': '【处理请求】 {asctime}\n'
-                      'duration: {duration}s\n'
-                      'url: {message}\n'
-                      '{method}: {request}\n'
-                      'response: {response}\n',
             'style': '{',
         },
-        'info_verbose_request': {
-            'format': '【发送请求】 {asctime}\n'
-                      'duration: {duration}s\n'
-                      'url: {message}\n'
-                      '{method}: {request}\n'
-                      'response: {response}\n',
-            'style': '{',
-        },
-        'warning_verbose': {
-            'format': '【警告】 {asctime}\n'
-                      'file: {filename}:{lineno}\n'
-                      'url: {message}\n'
-                      '{method}: {request}\n'
-                      'response: {response}\n',
-            'style': '{',
-        },
-        'error_verbose': {
-            'format': '【错误】 {asctime}\n'
-                      'file: {filename}:{lineno}\n'
-                      'url: {message}\n'
-                      '{method}: {request}\n'
-                      '-----EXCEPT BEGIN-----\n'
-                      '{response}'
-                      '-----EXCEPT END-----\n',
-            'style': '{',
+        'json_verbose': {
+            'class': 'pythonjsonlogger.jsonlogger.JsonFormatter',
         },
     },
     'filters': {  # 5.4 处理控制
@@ -206,13 +170,9 @@ LOGGING = {
         # 'production_environment': {
         #     '()': 'django.utils.log.RequireDebugFalse',
         # },
-        'info_filter_request': {
+        'info_filter': {
             '()': 'django.utils.log.CallbackFilter',
-            'callback': filter_request('INFO', 'request'),
-        },
-        'info_filter_response': {
-            '()': 'django.utils.log.CallbackFilter',
-            'callback': filter_request('INFO', 'response'),
+            'callback': filter_request('INFO'),
         },
         'warning_filter': {
             '()': 'django.utils.log.CallbackFilter',

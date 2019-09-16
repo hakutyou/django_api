@@ -6,7 +6,6 @@ from django.http import JsonResponse, HttpResponse
 
 from api.exception import ServiceError
 from api.service import logger
-from utils import string_color
 
 
 # noinspection PyPep8Naming
@@ -39,15 +38,8 @@ def Response(request, code=0, _type='dict', **kwargs):
         content_type = kwargs.get('content_type', 'text/plain')
     status = _status_mapper.get(code, 400)
     # logger
-    print('---------------')
-    print(request)
-    print('---------------')
     time_cost = time.time() - request.time_begin
     # 格式化日志
-    try:
-        request_post = request.post
-    except AttributeError:
-        request_post = json.dumps(request.POST.dict(), indent=4, ensure_ascii=False)
     print_ret = ret
     if isinstance(print_ret, dict):
         print_ret = json.dumps(ret, indent=4, ensure_ascii=False)
@@ -55,25 +47,29 @@ def Response(request, code=0, _type='dict', **kwargs):
     if code == 0:
         logger.info(f'{request.scheme}://{request.get_host()}{request.get_full_path()}',
                     extra={
-                        'koto': 'response',
+                        'rid': request.rid,
+                        'koto': 'response_return',
                         'duration': str(time_cost),
                         'method': request.method,
-                        'request': string_color(request_post, 'green'),
-                        'response': string_color(print_ret, 'pink'),
+                        'response': print_ret,
                     })
     elif code >= 1000:
         logger.error(f'{request.scheme}://{request.get_host()}{request.get_full_path()}',
                      extra={
+                         'rid': request.rid,
+                         'level': 'error',
+                         'koto': 'response_error',
                          'method': request.method,
-                         'request': string_color(request_post, 'yellow'),
-                         'response': string_color(f'{kwargs["exception"]}\n{kwargs["traceback"]}', 'red')
+                         'response': f'{kwargs["exception"]}\n{kwargs["traceback"]}',
                      })
     else:
         logger.warning(f'{request.scheme}://{request.get_host()}{request.get_full_path()}',
                        extra={
+                           'rid': request.rid,
+                           'level': 'warning',
+                           'koto': 'response_warning',
                            'method': request.method,
-                           'request': string_color(request_post, 'cyan'),
-                           'response': string_color(print_ret, 'yellow')
+                           'response': print_ret,
                        })
     return _type_mapper[_type](ret, status=status, content_type=content_type)
 

@@ -5,8 +5,10 @@ import time
 from django.conf import settings
 
 from api.exception import ClientError, ServiceError
+from api.service import logger
 from api.shortcuts import Response
 from external.interface.mail import internal_send_mail
+from utils import random_string
 
 
 class EnhanceMiddleware(object):
@@ -14,9 +16,20 @@ class EnhanceMiddleware(object):
         self.mail_time = time.time()  # 上次发送邮件的时间
         self.get_response = get_response
 
-    def __call__(self, request):
+    def __call__(self, request, time_time=time.time()):
         # Request
-        request.time_begin = time.time()
+        request.time_begin = time_time
+        request_post = request.POST
+        request.rid = f'{request.time_begin}{random_string()}'
+        logger.info(f'{request.scheme}://{request.get_host()}{request.get_full_path()}',
+                    extra={
+                        'rid': request.rid,
+                        'meta': dict(request.META),
+                        'koto': 'response_accept',
+                        'method': request.method,
+                        'request': request_post,
+                    })
+
         response = self.get_response(request)
         return response
 

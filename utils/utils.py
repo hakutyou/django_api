@@ -4,6 +4,7 @@ import random
 import string
 
 import sha3
+from django.utils import timezone
 
 from . import const
 
@@ -13,7 +14,7 @@ def random_string(rule: str = string.ascii_letters + string.digits, length: int 
 
 
 def now():
-    return datetime.datetime.utcnow()
+    return timezone.now()
 
 
 def read_time(str_time, time_format='%Y/%m/%d'):
