@@ -109,6 +109,26 @@ def filter_request(levelname, koto=None):
     return _filter_request
 
 
+def log_handlers(level='info'):
+    general_dict = {
+        'filters': [f'{level}_filter'],
+        'formatter': 'json_verbose',
+        'level': 'DEBUG',
+    }
+    if DEBUG is True:
+        return dict(general_dict, **{
+            'class': 'logging.StreamHandler',
+        })
+    else:
+        return dict(general_dict, **{
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'when': 'D',
+            'interval': 1,
+            'backupCount': 3,
+            'filename': f'./log/{level}.log',
+        })
+
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
@@ -132,24 +152,9 @@ LOGGING = {
             'formatter': 'sql',
             'level': 'DEBUG',
         },
-        'info_console_json': {
-            'class': 'logging.StreamHandler',
-            'filters': ['info_filter'],
-            'formatter': 'json_verbose',
-            'level': 'INFO',
-        },
-        'warning_console': {
-            'class': 'logging.StreamHandler',
-            'filters': ['warning_filter'],
-            'formatter': 'json_verbose',
-            'level': 'WARNING',
-        },
-        'error_console': {
-            'class': 'logging.StreamHandler',
-            'filters': ['error_filter'],
-            'formatter': 'json_verbose',
-            'level': 'ERROR',
-        },
+        'info_console_json': log_handlers('info'),
+        'warning_console': log_handlers('warning'),
+        'error_console': log_handlers('error'),
     },
     'formatters': {  # 5.3 格式化
         'sql': {  # SQL

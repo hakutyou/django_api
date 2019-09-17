@@ -4,6 +4,7 @@
 /.idea/
 test.py
 */migrations/*
+/log/
 !*/migrations/__init__.py
 *.pyc
 *.pyo
