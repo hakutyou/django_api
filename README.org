@@ -15,6 +15,7 @@ python manage.py runserver
 ** Server Environment
 #+BEGIN_SRC bash
 cp script/product.env .env
+mkdir -p ./log
 #+END_SRC
 
 

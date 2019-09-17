@@ -15,7 +15,8 @@ services:
       - /etc/shadow:/etc/shadow:ro
       - /etc/group:/etc/group:ro
       - /etc/gshadow:/etc/gshadow:ro
-      - .:/app
+      - /var/log/elk/api/:/app/log/
+      - ./:/app/
     networks:
       base-net:
         ipv4_address: 172.18.0.70
