@@ -15,7 +15,7 @@ def require_internal_auth(func):
         try:
             random_str = data.get('random_str')
             request_time = int(random_str[:10])
-        except ValueError:
+        except (ValueError, TypeError):
             raise ServiceError('random_str format error', code=401)
         if not request_time:
             raise ServiceError('expected random_str', code=400)
@@ -34,7 +34,7 @@ def require_internal_auth(func):
         return utils.message_digest(split_joint)
 
     def wrapper(request, *args, **kwargs):
-        if request.META.get('INTERNAL_TOKEN') != get_token(dict(request.POST)):
+        if request.META.get('HTTP_INTERNAL_TOKEN') != get_token(request.POST.dict()):
             return Response(-1)
         return func(request, *args, **kwargs)
 

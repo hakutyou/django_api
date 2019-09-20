@@ -19,17 +19,18 @@ class EnhanceMiddleware(object):
     def __call__(self, request, time_time=time.time()):
         # Request
         request.time_begin = time_time
-        request_post = request.POST
+        request_post = request.POST or request.body
         request.rid = f'{request.time_begin}{random_string()}'
-        logger.info(f'{request.scheme}://{request.get_host()}{request.get_full_path()}',
-                    extra={
-                        'rid': request.rid,
-                        'meta': dict(request.META),
-                        'koto': 'response_accept',
-                        'method': request.method,
-                        'request': request_post,
-                    })
-
+        logger.info(f'{request.scheme}://{request.get_host()}{request.get_full_path()}', extra={
+            'rid': request.rid,
+            'remote_ip': request.META.get('REMOTE_ADDR'),
+            'authorization': request.META.get('HTTP_AUTHORIZATION'),
+            # postman 需要传入 header 参数为 internal-token（去掉前面的 HTTP- 并且使用减号代替下划线）
+            'internal_token': request.META.get('HTTP_INTERNAL_TOKEN'),
+            'koto': 'response_accept',
+            'method': request.method,
+            'request': request_post,
+        })
         response = self.get_response(request)
         return response
 

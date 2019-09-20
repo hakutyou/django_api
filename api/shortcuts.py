@@ -39,10 +39,6 @@ def Response(request, code=0, _type='dict', **kwargs):
     status = _status_mapper.get(code, 400)
     # logger
     time_cost = time.time() - request.time_begin
-    # 格式化日志
-    print_ret = ret
-    if isinstance(print_ret, dict):
-        print_ret = json.dumps(ret, indent=4, ensure_ascii=False)
 
     if code == 0:
         logger.info(f'{request.scheme}://{request.get_host()}{request.get_full_path()}',
@@ -51,7 +47,7 @@ def Response(request, code=0, _type='dict', **kwargs):
                         'koto': 'response_return',
                         'duration': str(time_cost),
                         'method': request.method,
-                        'response': print_ret,
+                        'response': str(ret),
                     })
     elif code >= 1000:
         logger.error(f'{request.scheme}://{request.get_host()}{request.get_full_path()}',
@@ -69,7 +65,7 @@ def Response(request, code=0, _type='dict', **kwargs):
                            'level': 'warning',
                            'koto': 'response_warning',
                            'method': request.method,
-                           'response': print_ret,
+                           'response': str(ret),
                        })
     return _type_mapper[_type](ret, status=status, content_type=content_type)
 
