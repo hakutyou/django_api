@@ -19,7 +19,7 @@ class TencentSMSService:
                 86, phone_number,
                 self.template_id, params, '', '', '')
         except Exception as e:
-            print(e)
+            # print(e)
             return False
         cache.set(f'sms:{phone_number}:{message_digest(name)}', code, timeout * 60 + 10)
         return True

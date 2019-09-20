@@ -33,7 +33,7 @@ def transform_time(str_time, time_format='%Y/%m/%d', output_format='%Y-%m-%d', h
     return get_time(read_time(str_time, time_format), output_format, hours)
 
 
-def list_get(lst, idx, default=None):
+def list_get(lst: list, idx: int, default=None):
     try:
         return lst[idx]
     except IndexError:
@@ -44,7 +44,7 @@ def string_color(msg, color='pink'):
     return f'{const.CONSOLE_COLOR[color]}{msg}{const.CONSOLE_COLOR["end"]}'
 
 
-def message_digest(message):
+def message_digest(message: str) -> str:
     """
     该项目使用的信息摘要算法
     """
