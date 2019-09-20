@@ -30,6 +30,7 @@ def require_internal_auth(func):
             split_joint += str(data[i])
         # 末尾添加 secret_key
         split_joint += 'secret_key' + settings.SECRET_KEY
+        print(split_joint)
         return utils.message_digest(split_joint)
 
     def wrapper(request, *args, **kwargs):

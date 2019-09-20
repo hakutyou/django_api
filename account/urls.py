@@ -5,6 +5,7 @@ from . import views
 from .controller import sms, user
 
 urlpatterns = [
+    # account/
     url(r'^sms_send/register$', sms.sms_sender('register')),
     url(r'^sms_send/reset_password', sms.sms_sender('reset_password')),
     url(r'^user/$', views.user_view),

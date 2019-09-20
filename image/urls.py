@@ -4,6 +4,7 @@ from django.conf.urls import url
 from .recognition import general, ocr, face
 
 urlpatterns = [
+    # /image
     url(r'^recognition$', general.general_recognition),
 
     url(r'^face_verify$', face.face_verify),
