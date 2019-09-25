@@ -122,7 +122,7 @@ def log_handlers(level='info'):
     else:
         return dict(general_dict, **{
             'class': 'logging.handlers.TimedRotatingFileHandler',
-            'when': 'D',
+            'when': 'MIDNIGHT',
             'interval': 1,
             'backupCount': 3,
             'filename': f'./log/{level}.log',
