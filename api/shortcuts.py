@@ -1,4 +1,3 @@
-import json
 import types
 
 import time
@@ -41,32 +40,32 @@ def Response(request, code=0, _type='dict', **kwargs):
     time_cost = time.time() - request.time_begin
 
     if code == 0:
-        logger.info(f'{request.scheme}://{request.get_host()}{request.get_full_path()}',
-                    extra={
-                        'rid': request.rid,
-                        'koto': 'response_return',
-                        'duration': str(time_cost),
-                        'method': request.method,
-                        'response': str(ret),
-                    })
+        logger.info('ok', extra={
+            'uri': f'{request.scheme}://{request.get_host()}{request.get_full_path()}',
+            'rid': request.rid,
+            'koto': 'response_return',
+            'duration': str(time_cost),
+            'method': request.method,
+            'response': str(ret),
+        })
     elif code >= 1000:
-        logger.error(f'{request.scheme}://{request.get_host()}{request.get_full_path()}',
-                     extra={
-                         'rid': request.rid,
-                         'level': 'error',
-                         'koto': 'response_error',
-                         'method': request.method,
-                         'response': f'{kwargs["exception"]}\n{kwargs["traceback"]}',
-                     })
+        logger.info('error', extra={
+            'uri': f'{request.scheme}://{request.get_host()}{request.get_full_path()}',
+            'rid': request.rid,
+            'level': 'error',
+            'koto': 'response_error',
+            'method': request.method,
+            'response': f'{kwargs["exception"]}\n{kwargs["traceback"]}',
+        })
     else:
-        logger.warning(f'{request.scheme}://{request.get_host()}{request.get_full_path()}',
-                       extra={
-                           'rid': request.rid,
-                           'level': 'warning',
-                           'koto': 'response_warning',
-                           'method': request.method,
-                           'response': str(ret),
-                       })
+        logger.info('warning', extra={
+            'uri': f'{request.scheme}://{request.get_host()}{request.get_full_path()}',
+            'rid': request.rid,
+            'level': 'warning',
+            'koto': 'response_warning',
+            'method': request.method,
+            'response': str(ret),
+        })
     return _type_mapper[_type](ret, status=status, content_type=content_type)
 
 

@@ -21,7 +21,8 @@ class EnhanceMiddleware(object):
         request.time_begin = time_time
         request_post = request.POST or request.body
         request.rid = f'{request.time_begin}{random_string()}'
-        logger.info(f'{request.scheme}://{request.get_host()}{request.get_full_path()}', extra={
+        logger.info(request_post, extra={
+            'uri': f'{request.scheme}://{request.get_host()}{request.get_full_path()}',
             'rid': request.rid,
             'remote_ip': request.META.get('REMOTE_ADDR'),
             'authorization': request.META.get('HTTP_AUTHORIZATION'),
@@ -29,7 +30,6 @@ class EnhanceMiddleware(object):
             'internal_token': request.META.get('HTTP_INTERNAL_TOKEN'),
             'koto': 'response_accept',
             'method': request.method,
-            'request': request_post,
         })
         response = self.get_response(request)
         return response
