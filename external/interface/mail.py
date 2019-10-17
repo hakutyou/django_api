@@ -5,8 +5,9 @@ from rest_framework.decorators import permission_classes, api_view
 from api.service import app
 from api.shortcuts import Response, request_check
 from permission import permission
-from utils import get_time, now, random_string
 from utils.celery import celery_stage, celery_catch
+from utils.utils import random_string
+from utils.xtime import get_time, now
 
 
 @app.task(bind=True)

@@ -1,7 +1,7 @@
 import rest_framework.serializers
 from django.contrib.auth import get_user_model
 
-from utils.utils import now
+from utils.xtime import now
 
 UserModel = get_user_model()
 
