@@ -4,7 +4,7 @@ from django.core.cache import cache
 
 from api.exception import ServiceError, ClientError
 from api.shortcuts import Response
-from utils import utils
+from utils import xcrypt
 
 
 def require_internal_auth(func):
@@ -31,7 +31,7 @@ def require_internal_auth(func):
         # 末尾添加 secret_key
         split_joint += 'secret_key' + settings.SECRET_KEY
         print(split_joint)
-        return utils.message_digest(split_joint)
+        return xcrypt.message_digest(split_joint)
 
     def wrapper(request, *args, **kwargs):
         if request.META.get('HTTP_INTERNAL_TOKEN') != get_token(request.POST.dict()):

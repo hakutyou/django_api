@@ -2,8 +2,6 @@ import os
 import random
 import string
 
-import sha3
-
 from . import const
 
 
@@ -22,16 +20,10 @@ def string_color(msg, color='pink'):
     return f'{const.CONSOLE_COLOR[color]}{msg}{const.CONSOLE_COLOR["end"]}'
 
 
-def message_digest(message: str) -> str:
-    """
-    该项目使用的信息摘要算法
-    """
-    k = sha3.keccak_224()
-    k.update(bytes(message, encoding='utf-8'))
-    return k.hexdigest()
-
-
 def protect_dict(data: dict):
+    """
+    将 bytes 的内容显示为 <bytes>，防止打印过长的内容
+    """
     if data is None:
         return data
 

@@ -3,7 +3,8 @@ import string
 from django.core.cache import cache
 from qcloudsms_py import SmsSingleSender
 
-from utils.utils import message_digest, random_string
+from utils.utils import random_string
+from utils.xcrypt import message_digest
 
 
 class TencentSMSService:
