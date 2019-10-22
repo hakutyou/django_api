@@ -8,9 +8,10 @@ from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
 
 
-def message_digest(message: str) -> str:
+def message_digest(message: str, method: str = 'keccak', bits: int = 224) -> str:
     """
-    该项目使用的信息摘要算法 sha3
+    信息摘要算法, 可以使用的包括
+    md5-16|32, Keccak-224|256|384|512
     """
     k = keccak.new(digest_bits=224)
     return k.update(message.encode('utf-8')).hexdigest()
@@ -26,19 +27,19 @@ def rsa_signature(message: str, pem: str, crypt_via='sha1') -> Union[str, None]:
     }
     private_key = RSA.importKey(pem)
     cipher = PKCS1_v1_5.new(private_key)  # PKCS1_v1_5 填充
-    h = crypt_mapping.get(crypt_via, SHA1).new(message.encode())
+    h = crypt_mapping.get(crypt_via, SHA1).new(message.encode('utf-8'))
     if cipher.can_sign():
         signature = cipher.sign(h)
     else:
         return None
-    return base64.b64encode(signature).decode()
+    return base64.b64encode(signature).decode('utf-8')
 
 
 # 测试
 if __name__ == '__main__':
     import json
 
-    print(message_digest('123123'))
+    print(message_digest('123'))
     pem = '''-----BEGIN PRIVATE KEY-----
         MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBAKd3zf0cyJkirVJ6
         ecWhATeWGlhjxYbvSbyYdQ7LZpat+Ac2fSPxWG6x9ndt5AC9IWYLo6EgOIVwav9z
@@ -56,7 +57,7 @@ if __name__ == '__main__':
         8LhyvAXTfr7F
         -----END PRIVATE KEY-----
         '''
-    content = json.dumps({'a': '1'}, sort_keys=True)
+    content = json.dumps({'text': 'あぁ'}, sort_keys=True)
     print(rsa_signature(content, pem, crypt_via='sha1'))
     # 'LH8W/rwVr8buqnVaXmtz9I1J+whc03s5cv25zd1SXDMd3FRNLqLxaLkDiZQ8ssW8J4gH'
     # 'eHcKDe7aWJhb/Nfx4gOTfzuRtiDaDSUxDNppHmkXSA5wjQvMbKMCkRWH/Tw5OOe6fNcB'
