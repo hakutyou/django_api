@@ -1,5 +1,5 @@
 from api.exception import ClientError
-from utils import random_string
+from utils.xrandom import random_string
 from .tencent import TencentService
 from .virtual_face import VirtualFace
 

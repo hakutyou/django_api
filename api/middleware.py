@@ -8,7 +8,7 @@ from api.exception import ClientError, ServiceError
 from api.service import logger
 from api.shortcuts import Response
 from external.interface.mail import internal_send_mail
-from utils import random_string
+from utils.xrandom import random_string
 
 
 class EnhanceMiddleware(object):

@@ -6,7 +6,7 @@ from api.service import app
 from api.shortcuts import Response, request_check
 from permission import permission
 from utils.celery import celery_stage, celery_catch
-from utils.utils import random_string
+from utils.xrandom import random_string
 from utils.xtime import get_time, now
 
 

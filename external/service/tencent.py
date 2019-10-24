@@ -4,7 +4,7 @@ from urllib import parse
 
 import time
 
-from utils import random_string
+from utils.xrandom import random_string
 from .base import BaseService
 
 

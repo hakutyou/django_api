@@ -6,7 +6,7 @@ from django.conf import settings
 from api.exception import ClientError
 from external.service import tencent_face, baidu_face
 from image.models import FaceUser
-from utils import random_string
+from utils.xrandom import random_string
 
 
 class FaceService:

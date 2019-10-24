@@ -20,6 +20,7 @@ def message_digest(message: str, method: str = 'keccak', bits: int = 224) -> str
 def rsa_signature(message: str, pem: str, crypt_via='sha1') -> Union[str, None]:
     """
     RSA 签名
+    crypt_via 可以是 sha1, md5
     """
     crypt_mapping = {
         'sha1': SHA1,  # RSA with SHA1

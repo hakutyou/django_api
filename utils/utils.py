@@ -1,12 +1,6 @@
 import os
-import random
-import string
 
 from . import const
-
-
-def random_string(rule: str = string.ascii_letters + string.digits, length: int = 16):
-    return ''.join(random.sample(rule, length))
 
 
 def list_get(lst: list, idx: int, default=None):
@@ -22,7 +16,7 @@ def string_color(msg, color='pink'):
 
 def protect_dict(data: dict):
     """
-    将 bytes 的内容显示为 <bytes>，防止打印过长的内容
+    将 bytes 的内容显示为 <bytes>，防止打印不可显示的内容
     """
     if data is None:
         return data
