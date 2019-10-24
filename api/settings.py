@@ -73,6 +73,7 @@ CORS_ALLOW_CREDENTIALS = True
 
 CORS_ORIGIN_REGEX_WHITELIST = [
     'https?://emilia.fun',
+    'https?://hakutyou.xyz',
 ]
 
 # 4. 模板配置
@@ -194,15 +195,16 @@ LOGGING = {
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': config('DB_ENGINE')
         'NAME': config('DB_NAME'),
         'USER': config('DB_USER'),
         'PASSWORD': config('DB_PASSWORD'),
         'HOST': config('DB_HOST'),
         'PORT': config('DB_PORT'),
-        'OPTIONS': {
-            'charset': 'utf8mb4',
-        },
+        # mysql 才需要 utf8mb4
+        # 'OPTIONS': {
+        #     'charset': 'utf8mb4',
+        # },
     }
 }
 # if DEBUG:
