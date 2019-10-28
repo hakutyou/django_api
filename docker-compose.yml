@@ -9,13 +9,16 @@ services:
     image: hakutyou/python3:python3
     restart: always
     hostname: api
+    working_dir: /app/api
+    # command: tail -f /dev/null
     command: ./run.sh
     volumes:
       - /etc/passwd:/etc/passwd:ro
       - /etc/shadow:/etc/shadow:ro
       - /etc/group:/etc/group:ro
       - /etc/gshadow:/etc/gshadow:ro
-      - ./:/app/
+      - pip_settings:/root/.pip
+      - ./:/app/api/
     networks:
       base-net:
         ipv4_address: 172.18.0.70
@@ -24,14 +27,24 @@ services:
     image: hakutyou/python3:python3
     restart: always
     hostname: celery
+    working_dir: /app/api
+    # command: tail -f /dev/null
     command: ./script/celery.sh
     volumes:
       - /etc/passwd:/etc/passwd:ro
       - /etc/shadow:/etc/shadow:ro
       - /etc/group:/etc/group:ro
       - /etc/gshadow:/etc/gshadow:ro
-      - .:/app
+      - pip_settings:/root/.pip
+      - .:/app/api/
     networks:
       base-net:
         ipv4_address: 172.18.0.71
+
+volumes:
+  pip_settings:
+    driver_opts:
+      type: bind
+      o: bind
+      device: /home/lihu/.pip
 

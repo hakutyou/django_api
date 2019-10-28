@@ -1,8 +1,7 @@
-Django
-PyJWT
 beautifulsoup4
 celery
 cos-python-sdk-v5
+Django
 django-cors-headers
 django-cors-middleware
 django-filter
@@ -13,8 +12,9 @@ eventlet
 gevent
 gunicorn
 lxml
-mysqlclient
+psycopg2-binary
 pycryptodome
+PyJWT
 python-decouple
 python-json-logger
 qcloudsms_py
