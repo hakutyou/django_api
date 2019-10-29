@@ -1,3 +1,4 @@
+import json
 import traceback
 
 import redis
@@ -8,6 +9,7 @@ from api.exception import ClientError, ServiceError
 from api.service import logger
 from api.shortcuts import Response
 from external.interface.mail import internal_send_mail
+from utils import protect_dict
 from utils.xrandom import random_string
 
 
@@ -21,14 +23,17 @@ class EnhanceMiddleware(object):
         request.time_begin = time_time
         request_post = request.POST or request.body
         request.rid = f'{request.time_begin}{random_string()}'
+
+        if isinstance(request_post, dict):
+            request_post = json.dumps(protect_dict(request_post), indent=2, sort_keys=True, ensure_ascii=False)
         logger.info(request_post, extra={
             'uri': f'{request.scheme}://{request.get_host()}{request.get_full_path()}',
             'rid': request.rid,
+            'koto': 'response_accept',
             'remote_ip': request.META.get('REMOTE_ADDR'),
             'authorization': request.META.get('HTTP_AUTHORIZATION'),
             # postman 需要传入 header 参数为 internal-token（去掉前面的 HTTP- 并且使用减号代替下划线）
             'internal_token': request.META.get('HTTP_INTERNAL_TOKEN'),
-            'koto': 'response_accept',
             'method': request.method,
         })
         response = self.get_response(request)

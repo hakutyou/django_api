@@ -2,6 +2,7 @@
 
 import datetime
 
+import time
 from django.utils import timezone
 
 
@@ -13,11 +14,18 @@ def read_time(str_time, time_format='%Y/%m/%d'):
     return datetime.datetime.strptime(str_time, time_format)
 
 
+def read_1970_time(str_second, time_format='%Y-%m-%d %H:%M:%S') -> str:
+    """
+    1970 年至今的秒数转时间
+    """
+    time_array = time.localtime(float(str_second))
+    return time.strftime(time_format, time_array)
+
+
 def get_time(utc_time, time_format='%Y-%m-%d %H:%M:%S', hours=8):
     utc_time = utc_time.replace(tzinfo=datetime.timezone.utc)
     tzutc_8 = datetime.timezone(datetime.timedelta(hours=hours))
-    local_dt = utc_time.astimezone(tzutc_8).strftime(time_format)
-    return local_dt
+    return utc_time.astimezone(tzutc_8).strftime(time_format)
 
 
 def transform_time(str_time, time_format='%Y/%m/%d', output_format='%Y-%m-%d', hours=0):

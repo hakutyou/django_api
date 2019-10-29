@@ -1,6 +1,7 @@
 import logging
 
 from utils import string_color
+from utils import xtime
 
 
 class JsonPrettyFormatter:
@@ -17,35 +18,45 @@ class JsonPrettyFormatter:
         return header
 
     def format_info(self, record: logging.LogRecord) -> str:
-        if record.__dict__['koto'] == 'request':
-            return f'【发送请求】{record.msecs}ms\n' \
-                   f'uri: {record.msg}\n' \
+        if record.__dict__['koto'] == 'request_send':
+            return f'【发送请求】{xtime.read_1970_time(record.created)}\n' \
+                   f'uri: {record.__dict__["uri"]}\n' \
                    f'{record.__dict__["method"]}: {string_color(record.__dict__["request"], "green")}'
+        if record.__dict__['koto'] == 'request_receive':
+            return f'【发送请求返回】{xtime.read_1970_time(record.created)}\n' \
+                   f'duration: {record.__dict__["duration"]}s\n' \
+                   f'uri: {record.__dict__["uri"]}\n' \
+                   f'{string_color(record.__dict__["response"], "blue")}'
+
         if record.__dict__['koto'] == 'response_accept':
-            return f'【接受请求】{record.__dict__["rid"]}\n' \
+            return f'【接受请求】{xtime.read_1970_time(record.created)}\n' \
+                   f'rid: {record.__dict__["rid"]}\n' \
                    f'uri: {record.__dict__["uri"]}\n' \
                    f'authorization: {string_color(record.__dict__["authorization"], "green")}\n' \
                    f'remote_ip: {string_color(record.__dict__["remote_ip"], "green")}\n' \
                    f'internal_token: {string_color(record.__dict__["internal_token"], "green")}\n' \
-                   f'{record.__dict__["method"]}: {string_color(record.msg, "green")}\n'
+                   f'{record.__dict__["method"]}: {string_color(record.msg, "green")}'
         if record.__dict__['koto'] == 'response_return':
-            return f'【接受请求返回】{record.__dict__["rid"]}\n' \
-                   f'duration: {record.msecs}ms\n' \
+            return f'【接受请求返回】{xtime.read_1970_time(record.created)}\n' \
+                   f'rid: {record.__dict__["rid"]}\n' \
+                   f'duration: {record.__dict__["duration"]}s\n' \
                    f'uri: {record.__dict__["uri"]}\n' \
                    f'{string_color(record.__dict__["response"], "pink")}'
         return self.format_default(record)
 
     @staticmethod
     def format_warn(record: logging.LogRecord) -> str:
-        return f'【警告】{record.__dict__["rid"]}\n' \
-               f'duration: {record.msecs}ms\n' \
+        return f'【警告】{xtime.read_1970_time(record.created)}\n' \
+               f'rid: {record.__dict__["rid"]}\n' \
+               f'duration: {record.__dict__["duration"]}s\n' \
                f'uri: {record.__dict__["uri"]}\n' \
                f'{string_color(record.__dict__["response"], "yellow")}'
 
     @staticmethod
     def format_error(record: logging.LogRecord) -> str:
-        return f'【错误】{record.__dict__["rid"]}\n' \
-               f'duration: {record.msecs}ms\n' \
+        return f'【错误】{xtime.read_1970_time(record.created)}\n' \
+               f'rid: {record.__dict__["rid"]}\n' \
+               f'duration: {record.__dict__["duration"]}s\n' \
                f'uri: {record.__dict__["uri"]}\n' \
                f'-----EXCEPT BEGIN-----\n' \
                f'{string_color(record.__dict__["response"], "red")}' \

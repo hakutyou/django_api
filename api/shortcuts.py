@@ -1,3 +1,4 @@
+import json
 import types
 
 import time
@@ -8,6 +9,9 @@ from api.service import logger
 
 
 # noinspection PyPep8Naming
+from utils import protect_dict
+
+
 def Response(request, code=0, _type='dict', **kwargs):
     """
     code == 0 表示正常的返回
@@ -39,6 +43,11 @@ def Response(request, code=0, _type='dict', **kwargs):
     # logger
     time_cost = time.time() - request.time_begin
 
+    if isinstance(ret, dict):
+        pretty_ret = json.dumps(protect_dict(ret), indent=2, sort_keys=True, ensure_ascii=False)
+    else:
+        pretty_ret = str(ret)
+
     if code == 0:
         logger.info('ok', extra={
             'uri': f'{request.scheme}://{request.get_host()}{request.get_full_path()}',
@@ -46,7 +55,7 @@ def Response(request, code=0, _type='dict', **kwargs):
             'koto': 'response_return',
             'duration': str(time_cost),
             'method': request.method,
-            'response': str(ret),
+            'response': pretty_ret,
         })
     elif code >= 1000:
         logger.error('error', extra={
@@ -54,6 +63,7 @@ def Response(request, code=0, _type='dict', **kwargs):
             'rid': request.rid,
             'level': 'error',
             'koto': 'response_error',
+            'duration': str(time_cost),
             'method': request.method,
             'response': f'{kwargs["exception"]}\n{kwargs["traceback"]}',
         })
@@ -63,8 +73,9 @@ def Response(request, code=0, _type='dict', **kwargs):
             'rid': request.rid,
             'level': 'warning',
             'koto': 'response_warning',
+            'duration': str(time_cost),
             'method': request.method,
-            'response': str(ret),
+            'response': pretty_ret,
         })
     return _type_mapper[_type](ret, status=status, content_type=content_type)
 

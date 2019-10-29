@@ -98,11 +98,11 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,  # True 表示禁用日志
     'loggers': {  # 5.1 总览
-        'django.db.backends': {
-            'handlers': ['sql'],
-            'propagate': False,
-            'level': 'DEBUG'
-        },
+        # 'django.db.backends': {
+        #     'handlers': ['sql'],
+        #     'propagate': False,
+        #     'level': 'DEBUG'
+        # },
         'api': {  # 项目内的 logger.info
             'handlers': ['json_console', 'json_file'],
             'propagate': False,

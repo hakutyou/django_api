@@ -1,3 +1,4 @@
+import copy
 import os
 
 from . import const
@@ -21,10 +22,11 @@ def protect_dict(data: dict):
     if data is None:
         return data
 
-    for i in data:
-        if isinstance(data[i], bytes):
-            data[i] = '<bytes>'
-    return data
+    ret_data = copy.deepcopy(data)
+    for i in ret_data:
+        if isinstance(ret_data[i], bytes):
+            ret_data[i] = '<bytes>'
+    return ret_data
 
 
 def run_shell(command: str):
