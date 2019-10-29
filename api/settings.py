@@ -93,54 +93,18 @@ TEMPLATES = [
     },
 ]
 
-
 # 5.日志配置
-def filter_request(levelname, koto=None):
-    def _filter_request(record):
-        if record.levelname != levelname:
-            return False
-        if koto and record.koto != koto:
-            """
-            koto == request 表示向其他服务器发送 Request
-            koto == reponse 表示接受 Request 返回 Response
-            """
-            return False
-        return True
-
-    return _filter_request
-
-
-def log_handlers(level='info'):
-    general_dict = {
-        'filters': [f'{level}_filter'],
-        'formatter': 'json_verbose',
-        'level': 'DEBUG',
-    }
-    if DEBUG is True:
-        return dict(general_dict, **{
-            'class': 'logging.StreamHandler',
-        })
-    else:
-        return dict(general_dict, **{
-            'class': 'logging.handlers.TimedRotatingFileHandler',
-            'when': 'MIDNIGHT',
-            'interval': 1,
-            'backupCount': 3,
-            'filename': f'./log/{level}.log',
-        })
-
-
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': True,
+    'disable_existing_loggers': False,  # True 表示禁用日志
     'loggers': {  # 5.1 总览
-        # 'django.db.backends': {
-        #     'handlers': ['sql'],
-        #     'propagate': False,
-        #     'level': 'DEBUG'
-        # },
+        'django.db.backends': {
+            'handlers': ['sql'],
+            'propagate': False,
+            'level': 'DEBUG'
+        },
         'api': {  # 项目内的 logger.info
-            'handlers': ['error_console', 'warning_console', 'info_console_json'],
+            'handlers': ['json_console', 'json_file'],
             'propagate': False,
             'level': 'DEBUG',
         }
@@ -153,9 +117,21 @@ LOGGING = {
             'formatter': 'sql',
             'level': 'DEBUG',
         },
-        'info_console_json': log_handlers('info'),
-        'warning_console': log_handlers('warning'),
-        'error_console': log_handlers('error'),
+        'json_console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'json_pretty',
+            'level': 'DEBUG',
+        },
+        'json_file': {
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filters': ['production_environment'],
+            'formatter': 'json_verbose',
+            'when': 'midnight',
+            'interval': 1,
+            'backupCount': 5,
+            'filename': '_std.log',
+            'level': 'DEBUG',
+        }
     },
     'formatters': {  # 5.3 格式化
         'sql': {  # SQL
@@ -163,30 +139,21 @@ LOGGING = {
                       'duration: {duration}s\n'
                       'sql: {sql}\n'
                       'params: {params}\n',
-            'style': '{',
+            'style': '{'
+        },
+        'json_pretty': {
+            '()': 'api.logformatter.JsonPrettyFormatter',
         },
         'json_verbose': {
-            'class': 'pythonjsonlogger.jsonlogger.JsonFormatter',
+            '()': 'pythonjsonlogger.jsonlogger.JsonFormatter',
         },
     },
     'filters': {  # 5.4 处理控制
         'debug_environment': {  # DEBUG 环境
             '()': 'django.utils.log.RequireDebugTrue',
         },
-        # 'production_environment': {
-        #     '()': 'django.utils.log.RequireDebugFalse',
-        # },
-        'info_filter': {
-            '()': 'django.utils.log.CallbackFilter',
-            'callback': filter_request('INFO'),
-        },
-        'warning_filter': {
-            '()': 'django.utils.log.CallbackFilter',
-            'callback': filter_request('WARNING'),
-        },
-        'error_filter': {
-            '()': 'django.utils.log.CallbackFilter',
-            'callback': filter_request('ERROR'),
+        'production_environment': {
+            '()': 'django.utils.log.RequireDebugFalse',
         },
     },
 }

@@ -49,7 +49,7 @@ def Response(request, code=0, _type='dict', **kwargs):
             'response': str(ret),
         })
     elif code >= 1000:
-        logger.info('error', extra={
+        logger.error('error', extra={
             'uri': f'{request.scheme}://{request.get_host()}{request.get_full_path()}',
             'rid': request.rid,
             'level': 'error',
@@ -58,7 +58,7 @@ def Response(request, code=0, _type='dict', **kwargs):
             'response': f'{kwargs["exception"]}\n{kwargs["traceback"]}',
         })
     else:
-        logger.info('warning', extra={
+        logger.warning('warning', extra={
             'uri': f'{request.scheme}://{request.get_host()}{request.get_full_path()}',
             'rid': request.rid,
             'level': 'warning',
