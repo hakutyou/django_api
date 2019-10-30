@@ -2,9 +2,9 @@ import json
 from typing import Union
 
 import requests
-import time
 
 from api.service import logger
+from utils import xtime
 from utils.utils import protect_dict
 
 
@@ -25,9 +25,9 @@ class BaseService:
             'method': 'POST',
             'request': pretty_data,
         })
-        time_begin = time.time()
+        time_begin = xtime.now()
         response = requests.post(url, data=data)
-        time_cost = time.time() - time_begin
+        time_cost = xtime.now() - time_begin
         try:
             result = json.loads(response.text)
         except AttributeError:
@@ -40,7 +40,7 @@ class BaseService:
         logger.info('request_receive', extra={
             'uri': url,
             'koto': 'request_receive',
-            'duration': str(time_cost),
+            'duration': str(time_cost.total_seconds()),
             'response': pretty_result,
         })
         return response

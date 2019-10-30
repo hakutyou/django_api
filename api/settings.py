@@ -64,6 +64,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'log_request_id.middleware.RequestIDMiddleware',
     'api.middleware.EnhanceMiddleware',
 ]
 
@@ -113,18 +114,19 @@ LOGGING = {
         'sql': {
             # 输出到 stderr
             'class': 'logging.StreamHandler',
-            'filters': ['debug_environment'],
+            'filters': ['debug_environment', 'request_id'],
             'formatter': 'sql',
             'level': 'DEBUG',
         },
         'json_console': {
             'class': 'logging.StreamHandler',
+            'filters': ['request_id'],
             'formatter': 'json_pretty',
             'level': 'DEBUG',
         },
         'json_file': {
             'class': 'logging.handlers.TimedRotatingFileHandler',
-            'filters': ['production_environment'],
+            'filters': ['production_environment', 'request_id'],
             'formatter': 'json_verbose',
             'when': 'midnight',
             'interval': 1,
@@ -136,6 +138,7 @@ LOGGING = {
     'formatters': {  # 5.3 格式化
         'sql': {  # SQL
             'format': '【SQL】 {asctime}\n'
+                      'rid: {request_id}\n'
                       'duration: {duration}s\n'
                       'sql: {sql}\n'
                       'params: {params}\n',
@@ -154,6 +157,9 @@ LOGGING = {
         },
         'production_environment': {
             '()': 'django.utils.log.RequireDebugFalse',
+        },
+        'request_id': {
+            '()': 'log_request_id.filters.RequestIDFilter'
         },
     },
 }

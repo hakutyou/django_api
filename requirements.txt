@@ -5,6 +5,7 @@ Django
 django-cors-headers
 django-cors-middleware
 django-filter
+django-log-request-id
 django_redis
 djangorestframework
 djangorestframework-simplejwt

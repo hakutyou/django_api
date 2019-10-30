@@ -1,15 +1,12 @@
 import json
 import types
 
-import time
 from django.http import JsonResponse, HttpResponse
 
 from api.exception import ServiceError
 from api.service import logger
-
-
 # noinspection PyPep8Naming
-from utils import protect_dict
+from utils import protect_dict, xtime
 
 
 def Response(request, code=0, _type='dict', **kwargs):
@@ -41,7 +38,7 @@ def Response(request, code=0, _type='dict', **kwargs):
         content_type = kwargs.get('content_type', 'text/plain')
     status = _status_mapper.get(code, 400)
     # logger
-    time_cost = time.time() - request.time_begin
+    time_cost = xtime.now() - request.time_begin
 
     if isinstance(ret, dict):
         pretty_ret = json.dumps(protect_dict(ret), indent=2, sort_keys=True, ensure_ascii=False)
@@ -51,29 +48,26 @@ def Response(request, code=0, _type='dict', **kwargs):
     if code == 0:
         logger.info('ok', extra={
             'uri': f'{request.scheme}://{request.get_host()}{request.get_full_path()}',
-            'rid': request.rid,
             'koto': 'response_return',
-            'duration': str(time_cost),
+            'duration': str(time_cost.total_seconds()),
             'method': request.method,
             'response': pretty_ret,
         })
     elif code >= 1000:
         logger.error('error', extra={
             'uri': f'{request.scheme}://{request.get_host()}{request.get_full_path()}',
-            'rid': request.rid,
             'level': 'error',
             'koto': 'response_error',
-            'duration': str(time_cost),
+            'duration': str(time_cost.total_seconds()),
             'method': request.method,
             'response': f'{kwargs["exception"]}\n{kwargs["traceback"]}',
         })
     else:
         logger.warning('warning', extra={
             'uri': f'{request.scheme}://{request.get_host()}{request.get_full_path()}',
-            'rid': request.rid,
             'level': 'warning',
             'koto': 'response_warning',
-            'duration': str(time_cost),
+            'duration': str(time_cost.total_seconds()),
             'method': request.method,
             'response': pretty_ret,
         })

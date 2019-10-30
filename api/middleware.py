@@ -9,8 +9,7 @@ from api.exception import ClientError, ServiceError
 from api.service import logger
 from api.shortcuts import Response
 from external.interface.mail import internal_send_mail
-from utils import protect_dict
-from utils.xrandom import random_string
+from utils import protect_dict, xtime
 
 
 class EnhanceMiddleware(object):
@@ -18,17 +17,15 @@ class EnhanceMiddleware(object):
         self.mail_time = time.time()  # 上次发送邮件的时间
         self.get_response = get_response
 
-    def __call__(self, request, time_time=time.time()):
+    def __call__(self, request):
         # Request
-        request.time_begin = time_time
+        request.time_begin = xtime.now()
         request_post = request.POST or request.body
-        request.rid = f'{request.time_begin}{random_string()}'
 
         if isinstance(request_post, dict):
             request_post = json.dumps(protect_dict(request_post), indent=2, sort_keys=True, ensure_ascii=False)
         logger.info(request_post, extra={
             'uri': f'{request.scheme}://{request.get_host()}{request.get_full_path()}',
-            'rid': request.rid,
             'koto': 'response_accept',
             'remote_ip': request.META.get('REMOTE_ADDR'),
             'authorization': request.META.get('HTTP_AUTHORIZATION'),
