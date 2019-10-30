@@ -95,6 +95,11 @@ TEMPLATES = [
 ]
 
 # 5.日志配置
+# 跨项目调用接口使用相同的 request_id
+LOG_REQUEST_ID_HEADER = "HTTP_X_REQUEST_ID"
+GENERATE_REQUEST_ID_IF_NOT_IN_HEADER = True
+REQUEST_ID_RESPONSE_HEADER = "RESPONSE_HEADER_NAME"
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,  # True 表示禁用日志
