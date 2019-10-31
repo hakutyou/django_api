@@ -102,13 +102,13 @@ REQUEST_ID_RESPONSE_HEADER = "RESPONSE_HEADER_NAME"
 
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': False,  # True 表示禁用日志
+    'disable_existing_loggers': False,  # True 表示禁用默认的日志，例如 404 提示
     'loggers': {  # 5.1 总览
-        # 'django.db.backends': {
-        #     'handlers': ['sql'],
-        #     'propagate': False,
-        #     'level': 'DEBUG'
-        # },
+        'django.db.backends': {
+            'handlers': ['sql'],
+            'propagate': False,
+            'level': 'DEBUG'
+        },
         'api': {  # 项目内的 logger.info
             'handlers': ['json_console', 'json_file'],
             'propagate': False,
@@ -131,12 +131,12 @@ LOGGING = {
         },
         'json_file': {
             'class': 'logging.handlers.TimedRotatingFileHandler',
-            'filters': ['production_environment', 'request_id'],
+            'filters': ['request_id'],
             'formatter': 'json_verbose',
             'when': 'midnight',
             'interval': 1,
             'backupCount': 5,
-            'filename': '_std.log',
+            'filename': 'log/info.log',
             'level': 'DEBUG',
         }
     },

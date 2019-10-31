@@ -1,10 +1,10 @@
-from django.conf.urls import url
+from django.urls import path, re_path
 
 import qcloud.controller as qcloud_api
 
 urlpatterns = [
     # /qcloud
-    url(r'^list(?P<path>.*/)$', qcloud_api.qfile.get_file_list),
-    url(r'^list(?P<path>.*)$', qcloud_api.qfile.get_file_info),
-    url(r'^upload/$', qcloud_api.qfile.upload_file),
+    re_path(r'^list(?P<path>.*/)$', qcloud_api.qfile.get_file_list),
+    re_path(r'^list(?P<path>.*)$', qcloud_api.qfile.get_file_info),
+    path('upload/', qcloud_api.qfile.upload_file),
 ]

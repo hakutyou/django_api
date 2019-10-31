@@ -1,4 +1,4 @@
-from django.conf.urls import url
+from django.urls import path
 from rest_framework_simplejwt import views as jwt_views
 
 from . import views
@@ -6,12 +6,12 @@ from .controller import sms, user
 
 urlpatterns = [
     # account/
-    url(r'^sms_send/register$', sms.sms_sender('register')),
-    url(r'^sms_send/reset_password', sms.sms_sender('reset_password')),
-    url(r'^user/$', views.user_view),
-    url(r'^login/$', views.login_view),
-    url(r'^password/reset/$', user.reset_password),
-    url(r'^password/modify/$', user.modify_password),
-    url(r'^refresh/$', jwt_views.token_refresh),
-    url(r'login/get', user.login_get),
+    path('sms_send/register/', sms.sms_sender('register')),
+    path('sms_send/reset_password/', sms.sms_sender('reset_password')),
+    path('user/', views.user_view),
+    path('login/', views.login_view),
+    path('password/reset/', user.reset_password),
+    path('password/modify/', user.modify_password),
+    path('refresh/', jwt_views.token_refresh),
+    path('login/get/', user.login_get),
 ]
