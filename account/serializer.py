@@ -1,7 +1,7 @@
 import rest_framework.serializers
 from django.contrib.auth import get_user_model
 
-from utils.xtime import now
+from utils import xtime
 
 UserModel = get_user_model()
 
@@ -26,7 +26,7 @@ class UserSerializer(rest_framework.serializers.ModelSerializer):
         user = UserModel.objects.get(
             username=username
         )
-        user.last_login = now()
+        user.last_login = xtime.now()
         user.save()
         return
 

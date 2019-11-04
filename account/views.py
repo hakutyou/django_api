@@ -4,10 +4,10 @@ from django.middleware import csrf
 from rest_framework import generics, exceptions
 from rest_framework_simplejwt import views
 
-import utils
 from api.exception import ClientError
 from api.shortcuts import Response
 from permission import permission
+from utils import xtime
 from .serializer import UserSerializer, GroupSerializer
 
 
@@ -24,7 +24,7 @@ class UserView(generics.CreateAPIView):
     def get(self, request):
         data = {
             'username': request.user.username,
-            'last_login': utils.get_time(request.user.last_login),
+            'last_login': xtime.to_strtime(request.user.last_login),
         }
         return Response(request, 0, data=data)
 

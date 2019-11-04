@@ -1,39 +1,61 @@
 # 时间相关
+# 时区使用 datetime.timezone.utc ，只有需要打印为 str (strtime) 时候设置时区，默认为 utc+8
 
 import datetime
 
-import time
 from django.utils import timezone
 
 
-def now():
+def now() -> datetime.datetime:
     return timezone.now()
 
 
-def read_time(str_time, time_format='%Y/%m/%d'):
-    return datetime.datetime.strptime(str_time, time_format)
+def from_timestamp_to_strtime(timestamp, time_format='%Y-%m-%d %H:%M:%S', hours: int = 8) -> str:
+    return to_strtime(from_timestamp(timestamp), time_format, hours)
 
 
-def read_1970_time(str_second, time_format='%Y-%m-%d %H:%M:%S') -> str:
+def from_strtime_to_timestamp(str_time: str, time_format='%Y-%m-%d %H:%M:%S', hours: int = 8) -> float:
+    return to_timestamp(from_strtime(str_time, time_format, hours))
+
+
+def to_timestamp(utc_time: datetime.datetime) -> float:
     """
-    1970 年至今的秒数转时间
+    datetime.datetime 转 1970 年至今的秒数
     """
-    time_array = time.localtime(float(str_second))
-    return time.strftime(time_format, time_array)
+    return utc_time.timestamp()
 
 
-def get_time(utc_time, time_format='%Y-%m-%d %H:%M:%S', hours=8):
-    utc_time = utc_time.replace(tzinfo=datetime.timezone.utc)
-    tzutc_8 = datetime.timezone(datetime.timedelta(hours=hours))
-    return utc_time.astimezone(tzutc_8).strftime(time_format)
+def from_timestamp(timestamp) -> datetime.datetime:
+    """
+    1970 年至今的秒数转 datetime.datetime
+    timestamp 为 float 或可以转为 float() 的类型
+    """
+    return datetime.datetime.fromtimestamp(float(timestamp)).astimezone(datetime.timezone.utc)
 
 
-def transform_time(str_time, time_format='%Y/%m/%d', output_format='%Y-%m-%d', hours=0):
-    # 时间加上 %H:%M:%S
-    return get_time(read_time(str_time, time_format), output_format, hours)
+def to_strtime(utc_time: datetime.datetime, time_format='%Y-%m-%d %H:%M:%S', hours: int = 8) -> str:
+    """
+    从 datetime 转 strtime
+    """
+    _timezone = datetime.timezone(datetime.timedelta(hours=hours))
+    return utc_time.astimezone(_timezone).strftime(time_format)
 
 
-def get_days_between(start_date, end_date):
+def from_strtime(str_time: str, time_format='%Y-%m-%d %H:%M:%S', hours: int = 8):
+    """
+    从 strtime 转 datetime
+    """
+    _timezone = datetime.timezone(datetime.timedelta(hours=hours))
+    _time_withtz = datetime.datetime.strptime(str_time, time_format).replace(tzinfo=_timezone)
+    return _time_withtz.astimezone(datetime.timezone.utc)
+
+
+def transform_strtime(str_time: str, time_format='%Y%m%d%H%M%S', output_format='%Y-%m-%d %H:%M:%S',
+                      hours: int = 8) -> str:
+    return to_strtime(from_strtime(str_time, time_format), output_format, hours)
+
+
+def get_days_between(start_date: datetime.datetime, end_date: datetime.datetime) -> int:
     """
     获取两个日期之间相隔多少天
     datetime 类型加上 .date 获取日期
@@ -41,7 +63,7 @@ def get_days_between(start_date, end_date):
     return (end_date - start_date).days
 
 
-def get_weeks_between(start_date, end_date, first_day=True):
+def get_weeks_between(start_date: datetime.datetime, end_date: datetime.datetime, first_day: bool = True) -> int:
     """
     获取两个日期之间相隔多少周
     first_day = 0 到 6 表示周 n 为一周第一天

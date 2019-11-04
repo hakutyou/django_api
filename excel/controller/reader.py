@@ -10,8 +10,8 @@ EXCEL_DATE = 3
 
 
 @app.task(bind=True)
-# TODO: celery 测试
-def add(self, x, y):
+# celery 测试
+def add(_, x, y):
     print('enter call function ...')
     time.sleep(1)
     return x + y
