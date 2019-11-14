@@ -6,8 +6,8 @@ from .controller import sms, user
 
 urlpatterns = [
     # account/
-    path('sms_send/register/', sms.sms_sender('register')),
-    path('sms_send/reset_password/', sms.sms_sender('reset_password')),
+    path('sms/register/', sms.sms_sender('register')),
+    path('sms/reset_password/', sms.sms_sender('reset_password')),
     path('user/', views.user_view),
     path('login/', views.login_view),
     path('password/reset/', user.reset_password),

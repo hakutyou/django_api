@@ -46,27 +46,24 @@ def Response(request, code=0, _type='dict', **kwargs):
         pretty_ret = str(ret)
 
     if code == 0:
-        logger.info('ok', extra={
+        logger.info('response_return', extra={
             'uri': f'{request.scheme}://{request.get_host()}{request.get_full_path()}',
-            'koto': 'response_return',
             'duration': str(time_cost.total_seconds()),
             'method': request.method,
             'response': pretty_ret,
         })
     elif code >= 1000:
-        logger.error('error', extra={
+        logger.error('response_error', extra={
             'uri': f'{request.scheme}://{request.get_host()}{request.get_full_path()}',
             'level': 'error',
-            'koto': 'response_error',
             'duration': str(time_cost.total_seconds()),
             'method': request.method,
             'response': f'{kwargs["exception"]}\n{kwargs["traceback"]}',
         })
     else:
-        logger.warning('warning', extra={
+        logger.warning('response_warning', extra={
             'uri': f'{request.scheme}://{request.get_host()}{request.get_full_path()}',
             'level': 'warning',
-            'koto': 'response_warning',
             'duration': str(time_cost.total_seconds()),
             'method': request.method,
             'response': pretty_ret,

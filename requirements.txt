@@ -21,5 +21,6 @@ python-json-logger
 qcloudsms_py
 redis
 requests
+requests_futures
 watchdog
 xlrd

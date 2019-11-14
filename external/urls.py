@@ -5,5 +5,5 @@ from external.interface import mail
 
 urlpatterns = [
     # /external
-    path('send_mail', mail.send_mail),
+    path('mail/send/', mail.send_mail),
 ]

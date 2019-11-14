@@ -3,6 +3,7 @@
 /.env
 /.idea/
 /db.sqlite3
+/log/
 /venv/
 test.py
 *.log
