@@ -29,7 +29,7 @@ def reset_password(request):
         raise ClientError('验证码错误', code=401)
 
     user.set_password(new_password)
-    user.save()
+    user.save(update_fields=['password'])
     return Response(request, 0)
 
 
@@ -46,15 +46,5 @@ def modify_password(request):
         raise ClientError('原密码错误', code=401)
 
     request.user.set_password(new_password)
-    request.user.save()
+    request.user.save(update_fields=['password'])
     return Response(request, 0)
-
-
-@request_check(
-    username=(str, True)
-)
-def login_get(request):
-    username = request.post.get('username')
-    if username == 'hakutyou':
-        return Response(request, 0)
-    return Response(request, 1, msg='认证失败')

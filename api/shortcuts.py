@@ -6,7 +6,7 @@ from django.http import JsonResponse, HttpResponse
 from api.exception import ServiceError
 from api.service import logger
 # noinspection PyPep8Naming
-from utils import protect_dict, xtime
+from utils import protect_dict_or_list, xtime
 
 
 def Response(request, code=0, _type='dict', **kwargs):
@@ -41,7 +41,7 @@ def Response(request, code=0, _type='dict', **kwargs):
     time_cost = xtime.now() - request.time_begin
 
     if isinstance(ret, dict):
-        pretty_ret = json.dumps(protect_dict(ret), indent=2, sort_keys=True, ensure_ascii=False)
+        pretty_ret = json.dumps(protect_dict_or_list(ret), indent=2, sort_keys=True, ensure_ascii=False)
     else:
         pretty_ret = str(ret)
 

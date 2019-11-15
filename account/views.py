@@ -35,13 +35,16 @@ user_view = UserView.as_view()
 class LoginView(views.TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         try:
-            response = super().post(request, *args, **kwargs)
+            serializer = self.serializer_class(data=request.data, context=self.get_serializer_context())
+            serializer.is_valid(raise_exception=True)
         except exceptions.AuthenticationFailed:
             raise ClientError('用户名或密码错误', code=401)
         token = csrf.get_token(request)
-        response.data['csrf_token'] = token
-        UserSerializer.login(request.POST['username'])
-        return response
+        serializer.validated_data['csrf_token'] = token
+        UserSerializer.login(serializer.user)
+        # 内部调用使用 request.do_request 代替 requests 以保持 rid 一致
+        # request.do_request.get('http://127.0.0.1:8000/account/user/')
+        return Response(request, 0, **serializer.validated_data)
 
 
 login_view = LoginView.as_view()

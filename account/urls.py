@@ -5,7 +5,7 @@ from . import views
 from .controller import sms, user
 
 urlpatterns = [
-    # account/
+    # api/account/
     path('sms/register/', sms.sms_sender('register')),
     path('sms/reset_password/', sms.sms_sender('reset_password')),
     path('user/', views.user_view),
@@ -13,5 +13,4 @@ urlpatterns = [
     path('password/reset/', user.reset_password),
     path('password/modify/', user.modify_password),
     path('refresh/', jwt_views.token_refresh),
-    path('login/get/', user.login_get),
 ]

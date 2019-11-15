@@ -10,9 +10,9 @@ class LoginPermission(permissions.BasePermission):
     """
 
     def has_permission(self, request, view):
-        if request.user.id is not None:  # AnonymousUser.id == None
-            return True
-        raise ClientError('未登录', code=401)
+        if request.user.is_anonymous:
+            raise ClientError('未登录', code=401)
+        return True
 
 
 class UserPermission(LoginPermission):

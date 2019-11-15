@@ -4,12 +4,13 @@ import traceback
 import redis
 import time
 from django.conf import settings
+from log_request_id.session import Session
 
 from api.exception import ClientError, ServiceError
 from api.service import logger
 from api.shortcuts import Response
 from external.interface.mail import internal_send_mail
-from utils import protect_dict, xtime
+from utils import protect_dict_or_list, xtime
 
 
 class EnhanceMiddleware(object):
@@ -24,7 +25,7 @@ class EnhanceMiddleware(object):
 
         # 接收到请求
         if isinstance(request_post, dict):
-            request_post = json.dumps(protect_dict(request_post), indent=2, sort_keys=True, ensure_ascii=False)
+            request_post = json.dumps(protect_dict_or_list(request_post), indent=2, sort_keys=True, ensure_ascii=False)
         logger.info('response_accept', extra={
             'uri': f'{request.scheme}://{request.get_host()}{request.get_full_path()}',
             'remote_ip': request.META.get('REMOTE_ADDR'),
@@ -34,6 +35,7 @@ class EnhanceMiddleware(object):
             'method': request.method,
             'data': request_post,
         })
+        request.do_request = Session()
         response = self.get_response(request)
         # 返回请求的日志在 shortcuts.py 中
         return response

@@ -22,17 +22,13 @@ class UserSerializer(rest_framework.serializers.ModelSerializer):
 
     # 直接调用
     @staticmethod
-    def login(username):
-        user = UserModel.objects.get(
-            username=username
-        )
+    def login(user):
         user.last_login = xtime.now()
-        user.save()
+        user.save(update_fields=['last_login'])
         return
 
     class Meta:
         model = UserModel
-        # Tuple of serialized model fields (see link [2])
         fields = ('id', 'username', 'email', 'password', 'mobile')
 
 

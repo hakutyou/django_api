@@ -7,7 +7,7 @@ from requests_futures.sessions import FuturesSession
 
 from api.service import logger
 from utils import xtime
-from utils.utils import protect_dict
+from utils.utils import protect_dict_or_list
 
 
 class BaseService:
@@ -21,7 +21,7 @@ class BaseService:
         url = f'{self.base_url}{interface}'
 
         if isinstance(data, list) or isinstance(data, dict):
-            pretty_data = json.dumps(protect_dict(data), indent=2, sort_keys=True, ensure_ascii=False)
+            pretty_data = json.dumps(protect_dict_or_list(data), indent=2, sort_keys=True, ensure_ascii=False)
         else:
             pretty_data = str(data)
 
@@ -36,7 +36,7 @@ class BaseService:
         url = f'{self.base_url}{interface}'
 
         if isinstance(data, list) or isinstance(data, dict):
-            pretty_data = json.dumps(protect_dict(data), indent=2, sort_keys=True, ensure_ascii=False)
+            pretty_data = json.dumps(protect_dict_or_list(data), indent=2, sort_keys=True, ensure_ascii=False)
         else:
             pretty_data = str(data)
 
@@ -46,7 +46,10 @@ class BaseService:
             'request': pretty_data,
         })
         time_begin = xtime.now()
-        response = requests.post(url, data=data)
+        if isinstance(data, list):
+            response = requests.post(url, json=data)
+        else:
+            response = requests.post(url, data=data)
         time_cost = xtime.now() - time_begin
         try:
             result = json.loads(response.text)
@@ -54,7 +57,7 @@ class BaseService:
             result = response
 
         if isinstance(result, dict):
-            pretty_result = json.dumps(protect_dict(result), indent=2, sort_keys=True, ensure_ascii=False)
+            pretty_result = json.dumps(protect_dict_or_list(result), indent=2, sort_keys=True, ensure_ascii=False)
         else:
             pretty_result = str(result)
         logger.info('request_receive', extra={

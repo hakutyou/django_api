@@ -4,6 +4,6 @@ from django.urls import path
 from external.interface import mail
 
 urlpatterns = [
-    # /external
+    # api/external/
     path('mail/send/', mail.send_mail),
 ]

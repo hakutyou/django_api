@@ -16,9 +16,9 @@ Including another URLconf
 from django.urls import path, include
 
 urlpatterns = [
-    path('account/', include('account.urls')),
-    path('data/', include('record.urls')),
-    path('external/', include('external.urls')),
-    path('qcloud/', include('qcloud.urls')),
-    path('image/', include('image.urls')),
+    path('api/account/', include('account.urls')),
+    path('api/data/', include('record.urls')),
+    path('api/external/', include('external.urls')),
+    path('api/qcloud/', include('qcloud.urls')),
+    path('api/image/', include('image.urls')),
 ]

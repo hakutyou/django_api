@@ -4,7 +4,7 @@ from django.urls import path
 from .recognition import general, ocr, face
 
 urlpatterns = [
-    # /image
+    # api/image/
     path('recognition/', general.general_recognition),
 
     path('face/verify/', face.face_verify),
