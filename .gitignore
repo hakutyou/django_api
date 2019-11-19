@@ -1,5 +1,3 @@
-!*/migrations/__init__.py
-*/migrations/*
 /.env
 /.idea/
 /db.sqlite3
