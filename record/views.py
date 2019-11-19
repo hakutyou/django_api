@@ -45,19 +45,21 @@ class DictKanaItemView(ListModelMixin,
         if not kana or not kanji:
             raise ServiceError('Argument Error', code=400)
         # kana_query
-        kana_query = self.queryset.get(kana=kana)
-        if not kana_query:
+        try:
+            kana_query = self.queryset.get(kana=kana)
+        except DictKanaItem.DoesNotExist:
             kana_query = self.queryset.create(kana=kana)
         # kanji_query
-        kanji_query = kana_query.kanji.get(kanji=kanji)
-        if not kanji_query:
+        try:
+            kanji_query = kana_query.kanji.get(kanji=kanji)
+        except DictKanjiItem.DoesNotExist:
             kanji_query = kana_query.kanji.create(
                 kanji=data.get('kanji'),
             )
-        kanji_query.score = data.get('score')
+        kanji_query.theta = data.get('theta', 1.0)
         kanji_query.hinnsi = data.get('hinnsi', '')
         kanji_query.rei = data.get('rei', '')
-        kanji_query.save(update_fields=['score', 'hinnsi', 'rei'])
+        kanji_query.save(update_fields=['theta', 'hinnsi', 'rei'])
         return Response(request, 0)
 
 

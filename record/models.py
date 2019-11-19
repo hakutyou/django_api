@@ -17,8 +17,8 @@ class DictKanaItem(models.Model):
 
 class DictKanjiItem(models.Model):
     kana = models.ForeignKey('record.DictKanaItem', related_name='kanji', on_delete=models.PROTECT)
-    kanji = models.CharField('漢字', unique=True, max_length=64, default=None)
-    imi = models.CharField('意味', max_length=256, default=None)
+    kanji = models.CharField('漢字', unique=True, max_length=64, default='')
+    imi = models.CharField('意味', max_length=256, default='')
 
     # dougi = Many To Many DictDougi
     theta = models.FloatField('シータ', default=1.0)
@@ -35,8 +35,8 @@ class DictKanjiItem(models.Model):
 
 class DictDougi(models.Model):
     imi = models.ManyToManyField('record.DictKanjiItem', related_name='dougi')
-    dougi = models.CharField('説明', max_length=256)
-    rei = models.TextField('例')
+    dougi = models.CharField('説明', max_length=256, default='')
+    rei = models.TextField('例', default='')
     update_date = models.DateField('更新时间', auto_now_add=True)
 
     class Meta:
@@ -47,7 +47,7 @@ class DictDougi(models.Model):
 
 class DictScore(models.Model):
     next_date = models.DateField('次回の時間', auto_now_add=True)
-    score = models.CharField('アカウント点数', max_length=128)
+    score = models.CharField('アカウント点数', max_length=128, default='')
     account = models.ForeignKey('account.UserModels', on_delete=models.CASCADE)
     kanji = models.ForeignKey('record.DictKanjiItem', on_delete=models.CASCADE)
 
