@@ -211,8 +211,8 @@ CACHES = {
 }
 
 # 7.1 celery 配置
-CELERY_BROKER = f'redis://{config("REDIS_HOST")}:{config("REDIS_PORT")}/{config("BROKER_INDEX")}'
-CELERY_BACKEND = f'redis://{config("REDIS_HOST")}:{config("REDIS_PORT")}/{config("BACKEND_INDEX")}'
+CELERY_BROKER = f'redis://:{config("REDIS_PASSWORD")}@{config("REDIS_HOST")}:{config("REDIS_PORT")}/{config("BROKER_INDEX")}'
+CELERY_BACKEND = f'redis://:{config("REDIS_PASSWORD")}@{config("REDIS_HOST")}:{config("REDIS_PORT")}/{config("BACKEND_INDEX")}'
 CELERY_IMPORTS = (
     'excel.controller',
     'external.interface',
