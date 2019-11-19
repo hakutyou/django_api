@@ -5,5 +5,6 @@ from . import views
 
 urlpatterns = [
     # api/data/
-    path('record/', views.record_item_view),
+    path('dict/kana/', views.dict_kana_item_view),
+    path('dict/kanji/', views.dict_kanji_item_view),
 ]

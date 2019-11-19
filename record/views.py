@@ -4,23 +4,23 @@ from rest_framework import generics
 from rest_framework.mixins import ListModelMixin, DestroyModelMixin, UpdateModelMixin, CreateModelMixin
 from rest_framework.settings import api_settings
 
-from api.exception import ClientError
+from api.exception import ServiceError
 from api.shortcuts import Response
-from utils.decorator import loop_deal_id
-from .models import RecordItem, RecordItemFilter
-from .serializer import RecordItemSerializer
+from .models import DictKanaItem, DictKanaItemFilter, DictKanjiItem, DictKanjiItemFilter
+from .serializer import DictKanaItemSerializer, DictKanjiItemSerializer
 
 
 # Create your views here.
-class RecordItemView(ListModelMixin,
-                     UpdateModelMixin,
-                     DestroyModelMixin,
-                     CreateModelMixin,
-                     generics.GenericAPIView):
-    queryset = RecordItem.objects.all()
+# かな検測
+class DictKanaItemView(ListModelMixin,
+                       UpdateModelMixin,
+                       DestroyModelMixin,
+                       CreateModelMixin,
+                       generics.GenericAPIView):
+    queryset = DictKanaItem.objects.all()
     pagination_class = api_settings.DEFAULT_PAGINATION_CLASS
-    serializer_class = RecordItemSerializer
-    filterset_class = RecordItemFilter
+    serializer_class = DictKanaItemSerializer
+    filter_class = DictKanaItemFilter
     filter_backends = (DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter)
 
     def get_object(self):
@@ -31,22 +31,57 @@ class RecordItemView(ListModelMixin,
         return self.list(request, *args, **kwargs)
 
     # 删除
-    @loop_deal_id
     def delete(self, request, *args, **kwargs):
-        try:
-            self.destroy(request, *args, **kwargs)  # 204 表示删除成功
-            return Response(request, 0, data=request.pk)
-        except RecordItem.DoesNotExist:
-            raise ClientError(f'记录 {request.pk} 不存在', code=270)
+        # return self.destroy(request, *args, **kwargs)
+        pks = request.POST.get('id').split(',')
+        number, deleted_list = self.queryset.filter(id__in=pks).delete()
+        return Response(request, 204, data=number)
 
     # 增加
     def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
+        data = request.data.dict()
+        kana = data.get('kana')
+        kanji = data.get('kanji')
+        if not kana or not kanji:
+            raise ServiceError('Argument Error', code=400)
+        # kana_query
+        kana_query = self.queryset.get(kana=kana)
+        if not kana_query:
+            kana_query = self.queryset.create(kana=kana)
+        # kanji_query
+        kanji_query = kana_query.kanji.get(kanji=kanji)
+        if not kanji_query:
+            kanji_query = kana_query.kanji.create(
+                kanji=data.get('kanji'),
+            )
+        kanji_query.score = data.get('score')
+        kanji_query.hinnsi = data.get('hinnsi', '')
+        kanji_query.rei = data.get('rei', '')
+        kanji_query.save(update_fields=['score', 'hinnsi', 'rei'])
+        return Response(request, 0)
 
-    # 修改
-    def put(self, request, *args, **kwargs):
-        request.pk = request.POST.get('id')
-        return self.partial_update(request, *args, **kwargs)
+
+# 漢字検測
+class DictKanjiItemView(ListModelMixin,
+                        DestroyModelMixin,
+                        generics.GenericAPIView):
+    queryset = DictKanjiItem.objects.all()
+    pagination_class = api_settings.DEFAULT_PAGINATION_CLASS
+    serializer_class = DictKanjiItemSerializer
+    filter_class = DictKanjiItemFilter
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter)
+
+    # 查询
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    # 删除
+    def delete(self, request, *args, **kwargs):
+        # return self.destroy(request, *args, **kwargs)
+        pks = request.POST.get('id').split(',')
+        number, deleted_list = self.queryset.filter(id__in=pks).delete()
+        return Response(request, 204, data=number)
 
 
-record_item_view = RecordItemView.as_view()
+dict_kana_item_view = DictKanaItemView.as_view()
+dict_kanji_item_view = DictKanjiItemView.as_view()

@@ -1,9 +1,17 @@
 from rest_framework import serializers
 
-from .models import RecordItem
+from .models import DictKanaItem, DictKanjiItem
 
 
-class RecordItemSerializer(serializers.ModelSerializer):
+class DictKanjiItemSerializer(serializers.ModelSerializer):
     class Meta:
-        model = RecordItem
-        fields = '__all__'
+        model = DictKanjiItem
+        fields = ('id', 'kanji', 'score', 'hinnsi', 'rei',)
+
+
+class DictKanaItemSerializer(serializers.ModelSerializer):
+    kanji = DictKanjiItemSerializer(many=True)
+
+    class Meta:
+        model = DictKanaItem
+        fields = ('id', 'kana', 'kanji',)

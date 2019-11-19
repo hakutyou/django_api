@@ -3,41 +3,73 @@ from django.db import models
 
 
 # Create your models here.
-class RecordItem(models.Model):
-    """
-    Demo
-    """
-    create_date = models.DateField(auto_now_add=True)
-    name = models.CharField(max_length=128)
-    sex = models.IntegerField()
-    occupation = models.IntegerField()
-
-    def delete_item_list(self, item_list: list):
-        """
-        批量删除
-        """
-        # 批量修改
-        # return self.objects.filter(id__in=item_list).update(status=0)
-        # 批量删除
-        return self.objects.filter(id__in=item_list).delete()
+class DictKanaItem(models.Model):
+    kana = models.CharField('かな', unique=True, max_length=64)
+    # kanji = One To Many DictKanjiItem
+    update_date = models.DateField('更新时间', auto_now_add=True)
 
     class Meta:
-        db_table = 'record_item'
-        verbose_name = '记录'
+        db_table = 'dict_kana_table'
+        ordering = ['id']
+        verbose_name = 'かな表'
         verbose_name_plural = verbose_name
 
 
-class RecordItemFilter(django_filters.FilterSet):
-    # sort = django_filters.OrderingFilter(fields=('create_date',))
-    SEX_CHOICE = (
-        (0, 'female'),
-        (1, 'male'),
-    )
-    name = django_filters.CharFilter('name', lookup_expr='icontains')
-    sex = django_filters.ChoiceFilter('sex', choices=SEX_CHOICE)
-    start_date = django_filters.DateFilter('create_date', lookup_expr='gte')
-    end_date = django_filters.DateFilter('create_date', lookup_expr='lte')
+class DictKanjiItem(models.Model):
+    kana = models.ForeignKey('record.DictKanaItem', related_name='kanji', on_delete=models.PROTECT)
+    kanji = models.CharField('漢字', unique=True, max_length=64, default=None)
+    imi = models.CharField('意味', max_length=256, default=None)
+
+    # dougi = Many To Many DictDougi
+    theta = models.FloatField('シータ', default=1.0)
+    hinnsi = models.CharField('品词', max_length=64)
+    rei = models.TextField('例')
+
+    update_date = models.DateField('更新时间', auto_now_add=True)
 
     class Meta:
-        model = RecordItem
-        fields = ['name', 'sex', 'start_date', 'end_date']
+        db_table = 'dict_kanji_table'
+        verbose_name = '漢字表'
+        verbose_name_plural = verbose_name
+
+
+class DictDougi(models.Model):
+    imi = models.ManyToManyField('record.DictKanjiItem', related_name='dougi')
+    dougi = models.CharField('説明', max_length=256)
+    rei = models.TextField('例')
+    update_date = models.DateField('更新时间', auto_now_add=True)
+
+    class Meta:
+        db_table = 'dict_dougi_table'
+        verbose_name = '同義語表'
+        verbose_name_plural = verbose_name
+
+
+class DictScore(models.Model):
+    next_date = models.DateField('次回の時間', auto_now_add=True)
+    score = models.CharField('アカウント点数', max_length=128)
+    account = models.ForeignKey('account.UserModels', on_delete=models.CASCADE)
+    kanji = models.ForeignKey('record.DictKanjiItem', on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('account', 'kanji',)
+        db_table = 'dict_score_table'
+        verbose_name = 'アカウント点数表'
+        verbose_name_plural = verbose_name
+
+
+# Filter 部分
+class DictKanaItemFilter(django_filters.FilterSet):
+    kana = django_filters.CharFilter('kana', lookup_expr='icontains')
+
+    class Meta:
+        models = DictKanaItem
+        fields = ['kana']
+
+
+class DictKanjiItemFilter(django_filters.FilterSet):
+    kanji = django_filters.CharFilter('kanji', lookup_expr='icontains')
+
+    class Meta:
+        models = DictKanjiItem
+        fields = ['kanji']

@@ -18,6 +18,7 @@ def Response(request, code=0, _type='dict', **kwargs):
     """
     _status_mapper = {
         0: 200,
+        204: 204,  # 删除成功
         400: 400,  # 参数有误
         401: 401,  # 认证失败
         500: 500,  # 未曾预料的请求
