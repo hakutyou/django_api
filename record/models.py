@@ -21,6 +21,7 @@ class DictKanjiItem(models.Model):
     imi = models.CharField('意味', max_length=256, default='')
 
     # dougi = Many To Many DictDougi
+    # score = One To Many DictScore
     theta = models.FloatField('シータ', default=1.0)
     hinnsi = models.CharField('品词', max_length=64)
     rei = models.TextField('例')
@@ -46,10 +47,10 @@ class DictDougi(models.Model):
 
 
 class DictScore(models.Model):
-    next_date = models.DateField('次回の時間', auto_now_add=True)
+    next_date = models.DateField('次回の時間')
     score = models.CharField('アカウント点数', max_length=128, default='')
     account = models.ForeignKey('account.UserModels', on_delete=models.CASCADE)
-    kanji = models.ForeignKey('record.DictKanjiItem', on_delete=models.CASCADE)
+    kanji = models.ForeignKey('record.DictKanjiItem', related_name='score', on_delete=models.CASCADE)
 
     class Meta:
         unique_together = ('account', 'kanji',)

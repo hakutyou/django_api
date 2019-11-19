@@ -18,6 +18,13 @@ def from_strtime_to_timestamp(str_time: str, time_format='%Y-%m-%d %H:%M:%S', ho
     return to_timestamp(from_strtime(str_time, time_format, hours))
 
 
+def to_date(utc_time: datetime.datetime) -> datetime.date:
+    """
+    datetime.datetime 转 date （丢失时间信息）
+    """
+    return utc_time.date()
+
+
 def to_timestamp(utc_time: datetime.datetime) -> float:
     """
     datetime.datetime 转 1970 年至今的秒数

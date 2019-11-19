@@ -56,7 +56,7 @@ class DictKanaItemView(ListModelMixin,
             kanji_query = kana_query.kanji.create(
                 kanji=data.get('kanji'),
             )
-        kanji_query.theta = data.get('theta', 1.0)
+        kanji_query.theta = data.get('theta', 0.2)
         kanji_query.hinnsi = data.get('hinnsi', '')
         kanji_query.rei = data.get('rei', '')
         kanji_query.save(update_fields=['theta', 'hinnsi', 'rei'])

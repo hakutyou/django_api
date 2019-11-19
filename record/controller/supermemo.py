@@ -1,10 +1,10 @@
 import math
 
 
-def supermemo_2(x: str) -> int:
+def supermemo_2(x: str, theta=0.2) -> int:
     x_array = _f(x, 6)
     x_array.reverse()
-    return math.floor(_supermemo_2(x_array))
+    return math.floor(_supermemo_2(x_array, theta=theta))
 
 
 def _f(n: str, x) -> [int]:
