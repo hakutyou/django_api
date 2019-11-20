@@ -6,7 +6,8 @@ from django.db import models
 class DictKanaItem(models.Model):
     kana = models.CharField('かな', unique=True, max_length=64)
     # kanji = One To Many DictKanjiItem
-    update_date = models.DateField('更新时间', auto_now_add=True)
+    # create_time = models.DateTimeField('创建时间', auto_now_add=True, null=True)
+    update_date = models.DateField('更新时间', auto_now=True)
 
     class Meta:
         db_table = 'dict_kana_table'
@@ -25,8 +26,8 @@ class DictKanjiItem(models.Model):
     theta = models.FloatField('シータ', default=1.0)
     hinnsi = models.CharField('品词', max_length=64)
     rei = models.TextField('例')
-
-    update_date = models.DateField('更新时间', auto_now_add=True)
+    # create_time = models.DateTimeField('创建时间', auto_now_add=True, null=True)
+    update_date = models.DateField('更新时间', auto_now=True)
 
     class Meta:
         db_table = 'dict_kanji_table'
@@ -38,7 +39,8 @@ class DictDougi(models.Model):
     imi = models.ManyToManyField('record.DictKanjiItem', related_name='dougi')
     dougi = models.CharField('説明', max_length=256, default='')
     rei = models.TextField('例', default='')
-    update_date = models.DateField('更新时间', auto_now_add=True)
+    # create_time = models.DateTimeField('创建时间', auto_now_add=True, null=True)
+    update_date = models.DateField('更新时间', auto_now=True)
 
     class Meta:
         db_table = 'dict_dougi_table'
@@ -51,6 +53,8 @@ class DictScore(models.Model):
     score = models.CharField('アカウント点数', max_length=128, default='')
     account = models.ForeignKey('account.UserModels', on_delete=models.CASCADE)
     kanji = models.ForeignKey('record.DictKanjiItem', related_name='score', on_delete=models.CASCADE)
+    # create_time = models.DateTimeField('创建时间', auto_now_add=True, null=True)
+    update_date = models.DateField('更新时间', auto_now=True)
 
     class Meta:
         unique_together = ('account', 'kanji',)
