@@ -1,20 +1,9 @@
 import csv
 import datetime
 
-import time
 import xlrd
 
-from api.service import app
-
 EXCEL_DATE = 3
-
-
-@app.task(bind=True)
-# celery 测试
-def add(_, x, y):
-    print('enter call function ...')
-    time.sleep(1)
-    return x + y
 
 
 def read_xls(filename, sheet_index=0):

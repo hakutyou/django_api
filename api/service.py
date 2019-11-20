@@ -15,7 +15,7 @@ app = Celery('api', broker=settings.CELERY_BROKER, backend=settings.CELERY_BACKE
 # the configuration object to child processes.
 # - namespace='CELERY' means all celery-related configuration keys
 #   should have a `CELERY_` prefix.
-app.config_from_object('django.conf:settings', namespace='CELERY')
+app.config_from_object('api.celery')
 
 # Load task modules from all registered Django app configs.
 app.autodiscover_tasks()
