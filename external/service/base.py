@@ -32,7 +32,7 @@ class BaseService:
         })
         return FuturesSession().post(url=url, data=data)
 
-    def post(self, interface: str, data: Union[dict, list] = None):
+    def post(self, interface: str, data: Union[dict, list] = None, headers=None):
         url = f'{self.base_url}{interface}'
 
         if isinstance(data, list) or isinstance(data, dict):
@@ -47,9 +47,9 @@ class BaseService:
         })
         time_begin = xtime.now()
         if isinstance(data, list):
-            response = requests.post(url, json=data)
+            response = requests.post(url, json=data, headers=headers)
         else:
-            response = requests.post(url, data=data)
+            response = requests.post(url, data=data, headers=headers)
         time_cost = xtime.now() - time_begin
         try:
             result = json.loads(response.text)

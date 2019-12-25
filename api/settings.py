@@ -60,7 +60,8 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # CSRF 开关
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -313,3 +314,7 @@ COS_BUCKET = config('COS_BUCKET')
 COS_ID = config('COS_ID')
 COS_KEY = config('COS_KEY')
 COS_REGION = config('COS_REGION')
+
+# 13.6 腾讯 SCF
+TENCENT_SCF_SECRET_ID = config('TENCENT_SCF_SECRET_ID')
+TENCENT_SCF_SECRET_KEY = config('TENCENT_SCF_SECRET_KEY')

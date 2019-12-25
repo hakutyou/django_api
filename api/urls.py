@@ -21,4 +21,5 @@ urlpatterns = [
     path('api/external/', include('external.urls')),
     path('api/qcloud/', include('qcloud.urls')),
     path('api/image/', include('image.urls')),
+    # path('api/ffmpeg/', include('mpeg.urls')),
 ]

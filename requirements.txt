@@ -10,6 +10,7 @@ django_redis
 djangorestframework
 djangorestframework-simplejwt
 eventlet
+ffmpeg-python
 gevent
 gunicorn
 lxml

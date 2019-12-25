@@ -1,12 +1,8 @@
-from django.conf import settings
-
-from external.service import baidu_vision
+from external.service import baidu_vision_service
 
 
 class VisionService:
     def __init__(self):
-        baidu_vision_service = baidu_vision.BaiduVisionService(client_id=settings.VISION_CLIENT_ID,
-                                                               client_secret=settings.VISION_SECRET)
         self.vision_service_list = {
             'baidu': baidu_vision_service
         }

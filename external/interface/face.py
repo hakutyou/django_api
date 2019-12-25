@@ -1,20 +1,15 @@
 import base64
 
 import requests
-from django.conf import settings
 
 from api.exception import ClientError
-from external.service import tencent_face, baidu_face
+from external.service import tencent_face_service, baidu_face_service
 from image.models import FaceUser
 from utils.xrandom import random_string
 
 
 class FaceService:
     def __init__(self):
-        tencent_face_service = tencent_face.TencentFaceService(appid=settings.TENCENT_AI_APPID,
-                                                               app_key=settings.TENCENT_AI_APPKEY)
-        baidu_face_service = baidu_face.BaiduFaceService(client_id=settings.FACE_CLIENT_ID,
-                                                         client_secret=settings.FACE_SECRET)
         self.face_service_list = {
             'tencent': tencent_face_service,
             'baidu': baidu_face_service,

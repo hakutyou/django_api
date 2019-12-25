@@ -1,5 +1,6 @@
 from django.views.decorators.csrf import csrf_exempt
 
+from api.exception import ClientError
 from api.shortcuts import Response, request_check
 from external.interface import ocr_service
 
@@ -15,7 +16,8 @@ def general_ocr(request):
     try:
         result = ocr_service.ocr_general(url, lang)
     except KeyError:
-        return Response(request, 0, data='图片格式错误')
+        raise ClientError('图片格式错误', code=401)
+        # return Response(request, 0, data='图片格式错误')
 
     data = ''
     # for i in result:
