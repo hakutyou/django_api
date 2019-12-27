@@ -10,3 +10,4 @@
 *.swp
 *.pid
 /celerybeat-schedule
+/celerybeat-schedule.db

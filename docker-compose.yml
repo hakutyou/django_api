@@ -13,23 +13,9 @@ services:
     # command: tail -f /dev/null
     command: ./run.sh
     volumes:
-      - /home/lihu/.pip/pip_settings:/root/.pip/pip_settings:ro
+      - ${HOME}/.pip/pip.conf:/root/.pip/pip.conf:ro
       - ./:/app/api/
     networks:
       base-net:
         ipv4_address: 172.18.0.71
-
-  celery:
-    image: hakutyou/python3:python3
-    restart: always
-    hostname: celery
-    working_dir: /app/api
-    # command: tail -f /dev/null
-    command: ./script/celery.sh
-    volumes:
-      - /home/lihu/.pip/pip_settings:/root/.pip/pip_settings:ro
-      - .:/app/api/
-    networks:
-      base-net:
-        ipv4_address: 172.18.0.72
 
