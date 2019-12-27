@@ -26,15 +26,16 @@ def celery_catch(func):
 
 
 @app.task(bind=True)
-# celery 异步测试
+# celery 异步测试, 运行 add.delay(3,4) 即可
 def add(_, x, y):
     print('enter call function ...')
     time.sleep(1)
+    print('ok ...')
     return x + y
 
 
 @task
 # celery, beat 定时测试
 def run_on_time():
-    # print('periodic task test!!!!!')
+    print('periodic task test!!!!!')
     return True

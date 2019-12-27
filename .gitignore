@@ -8,5 +8,5 @@
 *.pyo
 *.swo
 *.swp
+*.pid
 /celerybeat-schedule
-/celerybeat.pid

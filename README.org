@@ -4,19 +4,27 @@
 
 * QuickStart
 ** Local Environment
+*** Pycharm Environment
 #+BEGIN_SRC bash
+# 注意这里 Celery 并没有启动，如果需要则另外启动即可
+mkdir log
 cp script/debug.env .env
 # virtualenv --no-site-packages venv
 # source venv/bin/activate
 pip install -r requirements.txt
 # pip install mysqlclient
-python manage.py runserver
+# python manage.py runserver
+#+END_SRC
+
+*** Shell Environment
+#+BEGIN_SRC bash
+DEBUG=1 ./run.sh
 #+END_SRC
 
 ** Server Environment
 #+BEGIN_SRC bash
-cp script/product.env .env
-mkdir -p ./log
+./run.sh
+# 需要配置每次 git pull 时重新跑一下 ./run.sh 就会刷新所有 celery 和 gunicorn
 #+END_SRC
 
 
@@ -37,6 +45,11 @@ PyCharm 无法连接尝试使用以下 URL 确定时区信息
 #+BEGIN_EXAMPLE
 jdbc:mysql://localhost:3306/api?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
 #+END_EXAMPLE
+
+* gunicorn 下 logger 不能输出的问题
+#+BEGIN_SRC bash
+gunicorn -D -c gunicorn.py qchat.wsgi --capture-output
+#+END_SRC
 
 * Git 相关
 ** 删除文件，包括历史记录
