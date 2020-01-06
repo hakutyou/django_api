@@ -13,4 +13,7 @@ urlpatterns = [
     path('password/reset/', user.reset_password),
     path('password/modify/', user.modify_password),
     path('refresh/', jwt_views.token_refresh),
+
+    path('captcha/', user.get_captcha),
+    path('captcha/check', user.check_captcha),
 ]

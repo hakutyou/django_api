@@ -25,7 +25,10 @@ def Response(request, code=0, _type='dict', **kwargs):
     }
     _type_mapper = {
         'dict': JsonResponse,
-        'str': HttpResponse,
+    }
+    _content_type = {
+        'gif': 'image/gif',
+        'str': 'text/plain',
     }
     if _type == 'dict':
         if code < 1000:
@@ -36,7 +39,7 @@ def Response(request, code=0, _type='dict', **kwargs):
         content_type = 'application/json'
     else:
         ret = kwargs.get('data', '')
-        content_type = kwargs.get('content_type', 'text/plain')
+        content_type = kwargs.get('content_type', _content_type.get(_type, 'text/plain'))
     status = _status_mapper.get(code, 400)
     # logger
     time_cost = xtime.now() - request.time_begin
@@ -69,7 +72,8 @@ def Response(request, code=0, _type='dict', **kwargs):
             'method': request.method,
             'response': pretty_ret,
         })
-    return _type_mapper[_type](ret, status=status, content_type=content_type)
+    _response = _type_mapper.get(_type, HttpResponse)
+    return _response(ret, status=status, content_type=content_type)
 
 
 def request_check(**check_kwargs):

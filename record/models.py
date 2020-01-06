@@ -17,6 +17,10 @@ class DictKanaItem(models.Model):
 
 
 class DictKanjiItem(models.Model):
+    HINSI_CHOICE = (
+        ('meisi', '名詞'),
+        ('dousi', '動詞'),
+    )
     kana = models.ForeignKey('record.DictKanaItem', related_name='kanji', on_delete=models.PROTECT)
     kanji = models.CharField('漢字', unique=True, max_length=64, default='')
     imi = models.CharField('意味', max_length=256, default='')
@@ -24,7 +28,7 @@ class DictKanjiItem(models.Model):
     # dougi = Many To Many DictDougi
     # score = One To Many DictScore
     theta = models.FloatField('シータ', default=1.0)
-    hinnsi = models.CharField('品词', max_length=64)
+    hinnsi = models.CharField('品词', max_length=64, choices=HINSI_CHOICE)
     rei = models.TextField('例')
     # create_time = models.DateTimeField('创建时间', auto_now_add=True, null=True)
     update_date = models.DateField('更新时间', auto_now=True)
@@ -33,6 +37,16 @@ class DictKanjiItem(models.Model):
         db_table = 'dict_kanji_table'
         verbose_name = '漢字表'
         verbose_name_plural = verbose_name
+
+    @classmethod
+    def get_verbose_name(cls, field, name, default=None):
+        """
+        返回相当于 get__display 的数据
+        DictKanjiItem.get_verbose_name('hinnsi', 'meisi')
+        => '名詞', 相当于 get_HINSI_CHOICE_display()
+        """
+        field = cls._meta.get_field(field)
+        return dict(field.flatchoices).get(name, default)
 
 
 class DictDougi(models.Model):

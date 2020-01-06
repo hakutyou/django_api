@@ -5,6 +5,7 @@ from typing import Union
 import requests
 from requests_futures.sessions import FuturesSession
 
+from api.exception import ClientError
 from api.service import logger
 from utils import xtime
 from utils.utils import protect_dict_or_list
@@ -51,6 +52,9 @@ class BaseService:
         else:
             response = requests.post(url, data=data, headers=headers)
         time_cost = xtime.now() - time_begin
+        # 检查返回值
+        if response.status_code >= 400:
+            raise ClientError('服务器连接错误，请稍后再试')
         try:
             result = json.loads(response.text)
         except AttributeError:
