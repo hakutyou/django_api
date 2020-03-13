@@ -212,13 +212,15 @@ CACHES = {
 }
 
 # 7. celery, beat 配置
-CELERY_BROKER = f'redis://:{config("REDIS_PASSWORD")}@{config("REDIS_HOST")}:{config("REDIS_PORT")}/{config("BROKER_INDEX")}'
-CELERY_BACKEND = f'redis://:{config("REDIS_PASSWORD")}@{config("REDIS_HOST")}:{config("REDIS_PORT")}/{config("BACKEND_INDEX")}'
+CELERY_BROKER = f'redis://:{config("REDIS_PASSWORD")}@{config("REDIS_HOST")}' \
+                f':{config("REDIS_PORT")}/{config("BROKER_INDEX")}'
+CELERY_BACKEND = f'redis://:{config("REDIS_PASSWORD")}@{config("REDIS_HOST")}' \
+                 f':{config("REDIS_PORT")}/{config("BACKEND_INDEX")}'
 # 其他参数配置移动到 celery.py
 
 
 # 8. 邮件配置
-EMAIL_USE_SSL = config('EMAIL_USE_SSL')
+EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=True, cast=bool)
 EMAIL_HOST = config('EMAIL_HOST')
 EMAIL_PORT = config('EMAIL_PORT')
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')

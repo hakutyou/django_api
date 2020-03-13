@@ -3,9 +3,21 @@
 import base64
 from typing import Union
 
+from Crypto.Cipher import AES
 from Crypto.Hash import keccak, SHA1, MD5
 from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
+from Crypto.Util import Padding
+
+# 全局 Mapping
+AES_MODE_MAPPING = {
+    'cbc': AES.MODE_CBC,
+    'cfb': AES.MODE_CFB,
+    'ofb': AES.MODE_OFB,
+    'ctr': AES.MODE_CTR,
+    'gcm': AES.MODE_GCM,
+    'ecb': AES.MODE_ECB,
+}
 
 
 def message_digest(message: str, method: str = 'keccak', bits: int = 224) -> str:
@@ -13,7 +25,7 @@ def message_digest(message: str, method: str = 'keccak', bits: int = 224) -> str
     信息摘要算法, 可以使用的包括
     md5-16|32, Keccak-224|256|384|512
     """
-    k = keccak.new(digest_bits=224)
+    k = keccak.new(digest_bits=bits)
     return k.update(message.encode('utf-8')).hexdigest()
 
 
@@ -36,11 +48,36 @@ def rsa_signature(message: str, pem: str, crypt_via='sha1') -> Union[str, None]:
     return base64.b64encode(signature).decode('utf-8')
 
 
+def aes_encrypt(message: Union[bytes, str], key: bytes, mode: str = 'cbc', iv=None) -> bytes:
+    """
+    AES 加密
+    需要设定 key, iv, mode
+    """
+    if isinstance(message, str):
+        message = message.encode()
+    if not iv:
+        iv = key
+    cipher = AES.new(key, AES_MODE_MAPPING.get(mode, AES.MODE_CBC), iv=iv)
+    return cipher.encrypt(Padding.pad(message, AES.block_size))
+
+
+def aes_decrypt(data: bytes, key: bytes, mode: str = 'cbc', iv=None) -> bytes:
+    """
+    AES 解密
+    """
+    if not iv:
+        iv = key
+    cipher = AES.new(key, AES_MODE_MAPPING.get(mode, AES.MODE_CBC), iv=iv)
+    return Padding.unpad(cipher.decrypt(data), AES.block_size)
+
+
 # 测试
 if __name__ == '__main__':
     import json
 
     print(message_digest('123'))
+    #############
+    # RSA 签名
     pem = '''-----BEGIN PRIVATE KEY-----
         MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBAKd3zf0cyJkirVJ6
         ecWhATeWGlhjxYbvSbyYdQ7LZpat+Ac2fSPxWG6x9ndt5AC9IWYLo6EgOIVwav9z
@@ -63,3 +100,9 @@ if __name__ == '__main__':
     # 'LH8W/rwVr8buqnVaXmtz9I1J+whc03s5cv25zd1SXDMd3FRNLqLxaLkDiZQ8ssW8J4gH'
     # 'eHcKDe7aWJhb/Nfx4gOTfzuRtiDaDSUxDNppHmkXSA5wjQvMbKMCkRWH/Tw5OOe6fNcB'
     # 'QM7PIZH9H8rOBdZcaP6tUrIafr6QKmsWHw0='
+    #############
+    # AES 加解密
+    a = aes_encrypt('123456789ABCDEF0', b'keyskeyskeyskeys', mode='cbc')
+    print(a)
+    b = aes_decrypt(a, b'keyskeyskeyskeys', mode='cbc')
+    print(b.decode())
