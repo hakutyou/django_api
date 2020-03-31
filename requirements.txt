@@ -1,4 +1,5 @@
 beautifulsoup4
+captcha
 celery
 cos-python-sdk-v5
 Django
