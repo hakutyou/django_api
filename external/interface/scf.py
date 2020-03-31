@@ -2,6 +2,7 @@ import requests
 
 from api.shortcuts import Response, request_check
 from external.service import scf_service
+from django.views.decorators.csrf import csrf_exempt
 
 
 def scf_common(request, path):
@@ -13,6 +14,7 @@ def scf_common(request, path):
     return Response(request, 0, msg=result)
 
 
+@csrf_exempt
 @request_check(
     url=(str, True),
     json=(str, False)
