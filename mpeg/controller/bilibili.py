@@ -3,7 +3,7 @@ from rest_framework.decorators import permission_classes, api_view
 from api.exception import ServiceError
 from api.shortcuts import request_check, Response
 from external.celery.tasks import celery_download_video
-from external.service import bilibili_api
+from external.interface import bilibili_api
 from permission import permission
 from utils.celery import celery_check, append_celery
 

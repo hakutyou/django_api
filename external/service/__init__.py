@@ -1,6 +1,6 @@
 from django.conf import settings
 
-from . import tencent_face, baidu_face, tencent_ocr, baidu_vision, tencent_scf, bilibili
+from . import tencent_face, baidu_face, tencent_ocr, baidu_vision, tencent_scf
 
 # 人脸识别
 tencent_face_service = tencent_face.TencentFaceService(appid=settings.TENCENT_AI_APPID,
@@ -21,6 +21,3 @@ baidu_vision_service = baidu_vision.BaiduVisionService(client_id=settings.VISION
 # 腾讯 SCF
 scf_service = tencent_scf.TencentSCFService(secret_id=settings.TENCENT_SCF_SECRET_ID,
                                             secret_key=settings.TENCENT_SCF_SECRET_KEY)
-
-# Bilibili 的 API 接口
-bilibili_api = bilibili.BilibiliService()

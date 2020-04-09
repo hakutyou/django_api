@@ -5,7 +5,7 @@ from django.conf import settings
 from django.core import mail
 
 from api.service import app
-from external.service import bilibili_api
+from external.interface import bilibili_api
 from utils.celery import celery_catch
 
 
