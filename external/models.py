@@ -12,6 +12,7 @@ class CeleryQueueModels(models.Model):
     ic = models.CharField('标识码', max_length=20)
     # yyyy mmdd HHMM SSrr rrrr
     _type = models.CharField('类型', max_length=8)
+    celery_id = models.CharField('celery 的标识码', max_length=64, default='')
     status = models.IntegerField(default=0)
 
     class Meta:

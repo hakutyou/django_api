@@ -1,6 +1,7 @@
 # 加解密相关
 # linux 使用 pycryptodome, Windows 使用 pycryptodomex 库
 import base64
+import hashlib
 from typing import Union
 
 from Crypto.Cipher import AES
@@ -25,8 +26,12 @@ def message_digest(message: str, method: str = 'keccak', bits: int = 224) -> str
     信息摘要算法, 可以使用的包括
     md5-16|32, Keccak-224|256|384|512
     """
-    k = keccak.new(digest_bits=bits)
-    return k.update(message.encode('utf-8')).hexdigest()
+    if method == 'md5':
+        algorithm = hashlib.md5
+    else:
+        k = keccak.new(digest_bits=bits)
+        algorithm = k.update
+    return algorithm(message.encode('utf-8')).hexdigest()
 
 
 def rsa_signature(message: str, pem: str, crypt_via='sha1') -> Union[str, None]:

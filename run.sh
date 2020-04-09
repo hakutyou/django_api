@@ -2,6 +2,7 @@
 
 # 每次重启运行此处即可
 mkdir log -pv
+mkdir tmp -pv
 
 if [[ $DEBUG == 1 ]]; then
   \cp script/debug.env .env -fv

@@ -1,8 +1,8 @@
-import time
+from celery.result import AsyncResult
 from celery.task import task
 
-from api.service import app
 from external.models import CeleryQueueModels
+from utils import xtime, xrandom
 
 
 def celery_stage(ic, _type, stage):
@@ -15,23 +15,37 @@ def celery_stage(ic, _type, stage):
     return
 
 
+def append_celery(_type, func, *args, **kwargs):
+    ic = xtime.to_strtime(xtime.now(), time_format='%Y%m%d%H%M%S') + xrandom.random_string(length=6)
+    celery_stage(ic, _type, 0)
+    celery_id = func.delay(ic, _type, *args, **kwargs)
+    celery_queue = CeleryQueueModels.objects.get(ic=ic)
+    celery_queue.celery_id = celery_id
+    celery_queue.save(update_fields=['celery_id'])
+    return ic
+
+
+def celery_check(ic):
+    celery_queue = CeleryQueueModels.objects.get(ic=ic)
+    status = celery_queue.status
+    if status != 2:
+        return status, None
+    result = AsyncResult(celery_queue.celery_id)
+    return status, result.get()
+
+
 def celery_catch(func):
     def wrapper(self, ic, _type, *args, **kwargs):
         celery_stage(ic, _type, 1)  # 正在执行或未返回
-        ret = func(self, *args, **kwargs)
+        try:
+            ret = func(self, *args, **kwargs)
+        except Exception as e:
+            celery_stage(ic, _type, -1)  # 执行失败
+            raise e
         celery_stage(ic, _type, 2)  # 执行完成
         return ret
 
     return wrapper
-
-
-@app.task(bind=True)
-# celery 异步测试, 运行 add.delay(3,4) 即可
-def add(_, x, y):
-    print('enter call function ...')
-    time.sleep(1)
-    print('ok ...')
-    return x + y
 
 
 @task

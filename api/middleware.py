@@ -9,8 +9,9 @@ from log_request_id.session import Session
 from api.exception import ClientError, ServiceError
 from api.service import logger
 from api.shortcuts import Response
-from external.interface.mail import internal_send_mail
+from external.celery.tasks import celery_send_mail
 from utils import protect_dict_or_list, xtime
+from utils.celery import append_celery
 
 
 class EnhanceMiddleware(object):
@@ -65,7 +66,7 @@ class EnhanceMiddleware(object):
             code = 1000
         else:
             code = 1001
-            internal_send_mail(exception, traceback.format_exc(),
-                               settings.EMAIL_RECEIVER)
+            # 加入 celery 队列
+            append_celery('mail', celery_send_mail, exception, traceback.format_exc(), settings.EMAIL_RECEIVER)
             self.mail_time = time.time()
         return Response(request, code=code, exception=exception, traceback=traceback.format_exc())

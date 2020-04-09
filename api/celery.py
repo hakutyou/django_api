@@ -1,9 +1,8 @@
-import datetime
-
 # 7.1 celery 配置
 CELERY_IMPORTS = (
     # 需要 celery 的文件列表
     'utils.celery',
+    'external.celery.tasks',
 )
 
 # 7.2 beat 配置

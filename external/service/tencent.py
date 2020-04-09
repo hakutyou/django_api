@@ -15,7 +15,7 @@ class TencentService(BaseService):
         self.appid = appid
         self.app_key = app_key
 
-    def post(self, interface: str, data: Union[dict, list] = None):
+    def post(self, interface: str, data: Union[dict, list] = None, headers=None):
         data['app_id'] = self.appid
         data['time_stamp'] = int(time.time())
         data['nonce_str'] = random_string(length=32)

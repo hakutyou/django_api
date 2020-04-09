@@ -1,5 +1,6 @@
 import json
 from asyncio import Future
+from contextlib import closing
 from typing import Union
 
 import requests
@@ -33,7 +34,20 @@ class BaseService:
         })
         return FuturesSession().post(url=url, data=data)
 
+    def get(self, interface: str, data: Union[dict, list] = None, headers=None):
+        return self.request(interface, data, headers, method='GET')
+
     def post(self, interface: str, data: Union[dict, list] = None, headers=None):
+        return self.request(interface, data, headers, method='POST')
+
+    def download(self, interface: str, fd, headers=None):
+        url = f'{self.base_url}{interface}'
+
+        with closing(requests.get(url, headers=headers, stream=True)) as res:
+            for chunk in res.iter_content(chunk_size=1024):
+                fd.write(chunk) if chunk else None
+
+    def request(self, interface: str, data: Union[dict, list] = None, headers=None, method=None):
         url = f'{self.base_url}{interface}'
 
         if isinstance(data, list) or isinstance(data, dict):
@@ -48,9 +62,15 @@ class BaseService:
         })
         time_begin = xtime.now()
         if isinstance(data, list):
-            response = requests.post(url, json=data, headers=headers)
+            if method == 'POST':
+                response = requests.post(url, json=data, headers=headers)
+            else:
+                response = requests.get(url, json=data, headers=headers)
         else:
-            response = requests.post(url, data=data, headers=headers)
+            if method == 'POST':
+                response = requests.post(url, data=data, headers=headers)
+            else:
+                response = requests.get(url, data=data, headers=headers)
         time_cost = xtime.now() - time_begin
         # 检查返回值
         if response.status_code >= 400:
