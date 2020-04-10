@@ -7,9 +7,9 @@ from django.conf import settings
 from log_request_id.session import Session
 
 from api.exception import ClientError, ServiceError
-from api.service import logger
+from api.celery import logger
 from api.shortcuts import Response
-from external.celery.tasks import celery_send_mail
+from external.celery.tasks import send_mail_celery
 from utils import protect_dict_or_list, xtime
 from utils.celery import append_celery
 
@@ -67,6 +67,6 @@ class EnhanceMiddleware(object):
         else:
             code = 1001
             # 加入 celery 队列
-            append_celery('mail', celery_send_mail, exception, traceback.format_exc(), settings.EMAIL_RECEIVER)
+            append_celery('mail', send_mail_celery, exception, traceback.format_exc(), settings.EMAIL_RECEIVER)
             self.mail_time = time.time()
         return Response(request, code=code, exception=exception, traceback=traceback.format_exc())

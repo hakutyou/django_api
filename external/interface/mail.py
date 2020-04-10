@@ -1,7 +1,7 @@
 from rest_framework.decorators import permission_classes, api_view
 
 from api.shortcuts import Response, request_check
-from external.celery.tasks import celery_send_mail
+from external.celery.tasks import send_mail_celery
 from permission import permission
 from utils.celery import append_celery
 
@@ -18,5 +18,5 @@ def send_mail(request):
     message = request.post.get('message')
     receive = request.post.get('receive')
     # 加入 celery 队列
-    append_celery('mail', celery_send_mail, subject, message, [receive])
+    append_celery('mail', send_mail_celery, subject, message, [receive])
     return Response(request, 0)

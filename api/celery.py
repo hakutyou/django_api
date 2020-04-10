@@ -1,18 +1,21 @@
-# 7.1 celery 配置
-CELERY_IMPORTS = (
-    # 需要 celery 的文件列表
-    'utils.celery',
-    'external.celery.tasks',
-)
+import logging
+import os
 
-# 7.2 beat 配置
-CELERYBEAT_SCHEDULE = {
-    # 'run_on_time_per_10_second': {
-    #     'task': 'utils.celery.run_on_time',
-    #     # Executes every Monday morning at 7:30 a.m.
-    #     # 'schedule': crontab(hour=7, minute=30, day_of_week=1),
-    #     # 每 10 秒调用一次, 第一次调用在运行 10 秒之后
-    #     'schedule': datetime.timedelta(seconds=10),
-    #     'args': (),
-    # },
-}
+from celery import Celery
+from django.conf import settings
+
+# Logger
+logger = logging.getLogger(__name__)
+
+# Celery
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'api.settings')
+app = Celery('api', broker=settings.CELERY_BROKER, backend=settings.CELERY_BACKEND)
+
+# Using a string here means the worker doesn't have to serialize
+# the configuration object to child processes.
+# - namespace='CELERY' means all celery-related configuration keys
+#   should have a `CELERY_` prefix.
+app.config_from_object('api.celery_config', namespace='CELERY')
+
+# Load task modules from all registered Django app configs.
+app.autodiscover_tasks()

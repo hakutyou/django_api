@@ -2,7 +2,7 @@ from rest_framework.decorators import permission_classes, api_view
 
 from api.exception import ServiceError
 from api.shortcuts import request_check, Response
-from external.celery.tasks import celery_download_video
+from external.celery.tasks import download_video_celery
 from external.interface import bilibili_api
 from permission import permission
 from utils.celery import celery_check, append_celery
@@ -46,23 +46,23 @@ def get_video(request):
         raise ServiceError('Argument Error', code=400)
 
     response = bilibili_api.get_video_info(bv, av)
+    referer = response.get('Referer')
     data = response.get('data')
     bvid = data.get('bvid')
     title = data.get('title').replace(' ', '-')
-    desc = response.get('desc')  # 简介
-    pic = response.get('pic')  # 封面
-    referer = response.get('Referer')
+    desc = data.get('desc')  # 简介
+    pic = data.get('pic')  # 封面
 
     ic_list = []
     for item in data['pages']:
         cid = str(item['cid'])
         page = str(item['page'])
-        part_title = item['part']  # 分 P 的标题
+        part_title = item['part'].replace(' ', '-')  # 分 P 的标题
         video_list = []
         for d_url in bilibili_api.get_play_list(referer, cid, quality)['durl']:
             video_list.append(d_url['url'])
         # 加入 celery 队列
-        ic = append_celery('download', celery_download_video, referer, video_list,
+        ic = append_celery('download', download_video_celery, referer, video_list,
                            filename=f'{title}_{part_title}',
                            codename=f'{bvid}_{page}')
         ic_list.append(ic)

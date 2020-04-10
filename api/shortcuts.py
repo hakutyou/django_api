@@ -4,7 +4,7 @@ import types
 from django.http import JsonResponse, HttpResponse
 
 from api.exception import ServiceError
-from api.service import logger
+from api.celery import logger
 # noinspection PyPep8Naming
 from utils import protect_dict_or_list, xtime
 

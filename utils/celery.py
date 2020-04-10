@@ -1,3 +1,5 @@
+from functools import wraps
+
 from celery.result import AsyncResult
 from celery.task import task
 
@@ -35,6 +37,7 @@ def celery_check(ic):
 
 
 def celery_catch(func):
+    @wraps(func)
     def wrapper(self, ic, _type, *args, **kwargs):
         celery_stage(ic, _type, 1)  # 正在执行或未返回
         try:

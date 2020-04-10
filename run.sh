@@ -20,7 +20,7 @@ pip install -r requirements.txt
 # 增加 --beat 用于定时调用 celery 任务
 # 此处 restart 会等待所有正在运行中的 worker 任务全部结束再运行
 # 仍然在队列中等待的会在重启后运行
-celery multi restart api --app=api.service --beat --loglevel=info --pidfile=celerybeat.pid --logfile=./log/celery-%n%I.log -c 4
+celery multi restart api --app=api.celery --beat --loglevel=info --pidfile=celerybeat.pid --logfile=./log/celery-%n%I.log -c 4
 # stop
 # celery multi stopwait api -l info --pidfile=celerybeat.pid
 

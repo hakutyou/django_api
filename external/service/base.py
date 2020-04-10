@@ -7,7 +7,7 @@ import requests
 from requests_futures.sessions import FuturesSession
 
 from api.exception import ClientError
-from api.service import logger
+from api.celery import logger
 from utils import xtime
 from utils.utils import protect_dict_or_list
 

@@ -22,7 +22,6 @@ class TencentCoSService:
     def upload(self, byte_stream, path, bucket=None):
         if not bucket:
             bucket = self.bucket
-        response = self.client.put_object(Bucket=bucket, Body=byte_stream,
-                                          Key=f'api/{path}', EnableMD5=False)
-        print(response)
+        self.client.put_object(Bucket=bucket, Body=byte_stream,
+                               Key=f'{path}', EnableMD5=False)
         return f'https://{bucket}.cos.{self.region}.myqcloud.com/{path}'
