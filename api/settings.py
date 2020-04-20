@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_filters',
     'rest_framework',
+    'rest_framework_swagger',
     'corsheaders',
     'account',
     'external',
@@ -237,6 +238,7 @@ EMAIL_RECEIVER = [config('EMAIL_RECEIVER')]
 # 9. JWT 配置
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'api.pagination.DefaultPagination',
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
     'PAGE_SIZE': 10,
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -256,6 +258,25 @@ SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS': True,
     # 'BLACKLIST_AFTER_ROTATION': True,
     'AUTH_HEADER_TYPES': ('Bearer',),
+}
+
+# 文档配置
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        "basic": {
+            'type': 'basic'
+        }
+    },
+    # 如果需要登录才能够查看接口文档, 登录的链接使用 restframework 自带的.
+    'LOGIN_URL': '/api/account/login/',
+    # 'LOGOUT_URL': 'rest_framework:logout',
+    # 接口文档中方法列表以首字母升序排列
+    # 'APIS_SORTER': 'alpha',
+    # 如果支持json提交, 则接口文档中包含json输入框
+    'JSON_EDITOR': True,
+    # 方法列表字母排序
+    'OPERATIONS_SORTER': 'alpha',
+    'VALIDATOR_URL': None,
 }
 
 # 10. Password validation

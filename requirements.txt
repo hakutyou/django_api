@@ -1,12 +1,14 @@
 beautifulsoup4
 captcha
 celery
+coreapi
 cos-python-sdk-v5
 Django
 django-cors-headers
 django-cors-middleware
 django-filter
 django-log-request-id
+django-rest-swagger
 django_redis
 djangorestframework
 djangorestframework-simplejwt

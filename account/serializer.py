@@ -7,6 +7,7 @@ UserModel = get_user_model()
 
 
 class UserSerializer(rest_framework.serializers.ModelSerializer):
+    code = rest_framework.serializers.CharField(write_only=True)
     password = rest_framework.serializers.CharField(write_only=True)
 
     # 给 serializer_class 使用
@@ -29,7 +30,7 @@ class UserSerializer(rest_framework.serializers.ModelSerializer):
 
     class Meta:
         model = UserModel
-        fields = ('id', 'username', 'email', 'password', 'mobile')
+        fields = ('id', 'username', 'email', 'password', 'mobile', 'code')
 
 
 class GroupSerializer(rest_framework.serializers.ModelSerializer):

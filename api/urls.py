@@ -15,6 +15,8 @@ Including another URLconf
 """
 from django.urls import path, include
 
+from api.swagger import get_swagger_view
+
 urlpatterns = [
     path('api/account/', include('account.urls')),
     path('api/data/', include('record.urls')),
@@ -22,4 +24,5 @@ urlpatterns = [
     path('api/qcloud/', include('qcloud.urls')),
     path('api/image/', include('image.urls')),
     path('api/mpeg/', include('mpeg.urls')),
+    path('docs/', get_swagger_view(title="开发文档")),
 ]

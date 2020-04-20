@@ -1,3 +1,5 @@
+import json
+
 import requests
 from django.views.decorators.csrf import csrf_exempt
 
@@ -29,10 +31,10 @@ def proxy_common(request):
     Chrome/55.0.2883.87 Safari/537.36'
     }
     url = request.post.get('url')
-    json = request.post.get('json')
+    json_ = json.loads(request.post.get('json'))
     method = request.post.get('method')
     if method == 'get':
-        response = requests.get(url, json=json, headers=headers)
+        response = requests.get(url, json=json_, headers=headers)
     else:
-        response = requests.post(url, json=json, headers=headers)
+        response = requests.post(url, json=json_, headers=headers)
     return Response(request, 0, _type='str', data=response.text)
