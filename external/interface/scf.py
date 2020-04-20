@@ -31,7 +31,9 @@ def proxy_common(request):
     Chrome/55.0.2883.87 Safari/537.36'
     }
     url = request.post.get('url')
-    json_ = json.loads(request.post.get('json'))
+    json_ = request.post.get('json')
+    if json_:
+        json_ = json.loads(json_)
     method = request.post.get('method')
     if method == 'get':
         response = requests.get(url, json=json_, headers=headers)
