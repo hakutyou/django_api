@@ -38,7 +38,13 @@ POST 请求才会验证 CSRF。禁用某个接口的 CSRF
 * Dependence
 ** Mariadb
 #+BEGIN_SRC mysql
+-- mysql -h 127.0.0.1 -uroot -p
 create database api default character set utf8mb4 collate utf8mb4_unicode_ci;
+-- 修改数据库
+alter database api character set utf8mb4 collate utf8mb4_general_ci;
+-- 修改表
+-- use api;
+alter table TABLE_NAME convert to character set utf8mb4 collate utf8mb4_general_ci;
 #+END_SRC
 
 PyCharm 无法连接尝试使用以下 URL 确定时区信息
@@ -52,6 +58,7 @@ gunicorn -D -c gunicorn.py qchat.wsgi --capture-output
 #+END_SRC
 
 * Git 相关
+
 ** 删除文件，包括历史记录
 #+BEGIN_SRC bash
 git filter-branch --force --index-filter 'git rm --cached $FILE' --prune-empty --tag-name-filter cat -- --all
