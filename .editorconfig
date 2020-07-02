@@ -13,6 +13,8 @@ trim_trailing_whitespace = true
 # 文件尾空白行
 insert_final_newline = true
 
+[*.yml]
+indent_size = 2
 
 [Makefile]
 indent_style = tab
