@@ -100,3 +100,10 @@ Arguments: -m flake8 $ProjectFileDir$
 Working directory: $ProjectFileDir$
 #+END_EXAMPLE
 
+** Github 的 workflow 设置
+#+BEGIN_EXAMPLE
+api_script 添加项目令牌
+Settings -> Secrets -> 添加 PASSWORD 和 USERNAME
+与 .github/workflows/django.yml 中的 secrets.PASSWORD 和 secrets.USERNAME 对应
+#+END_EXAMPLE
+
