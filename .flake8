@@ -1,0 +1,23 @@
+[flake8]
+max-line-length = 120
+max-complexity = 12
+import-order-style = google
+application-import-names = flake8
+format = %(path)s:%(row)d:%(col)d: %(code)s %(text)s
+exclude =
+    .tox,
+    .git,
+    .idea,
+    log,
+    tmp,
+    venv,
+# Auto generate file
+    migrations,
+    __pycache__,
+    *.pyc,
+    *.egg-info
+# F401: imported but unused
+# F403: unable to detect undefined names
+ignore = F401, F403
+enable-extensions = H106, H203
+
