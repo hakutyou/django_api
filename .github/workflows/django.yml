@@ -15,6 +15,13 @@ jobs:
         python-version: [3.6, 3.7, 3.8]
     steps:
       - uses: actions/checkout@v2
+      - name: Checkout submodules
+        shell: bash
+        run: |
+          git config --global url."https://${{ secrets.USERNAME }}:${{ secrets.PASSWORD }}@e.coding.net/".insteadOf "git@e.coding.net:"
+          git submodule sync --recursive
+          git -c protocol.version=2 submodule update --init --force --recursive --depth=1
+          cp script/product.env .env -fv
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v1
         with:
@@ -26,3 +33,4 @@ jobs:
       - name: Run Tests
         run: |
           python manage.py test
+
