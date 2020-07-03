@@ -22,6 +22,8 @@ jobs:
           git submodule sync --recursive
           git -c protocol.version=2 submodule update --init --force --recursive --depth=1
           cp script/product.env .env -fv
+          mkdir log -pv
+          mkdir tmp -pv
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v1
         with:
