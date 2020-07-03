@@ -58,7 +58,6 @@ gunicorn -D -c gunicorn.py qchat.wsgi --capture-output
 #+END_SRC
 
 * Git 相关
-
 ** 删除文件，包括历史记录
 #+BEGIN_SRC bash
 git filter-branch --force --index-filter 'git rm --cached $FILE' --prune-empty --tag-name-filter cat -- --all
@@ -79,3 +78,25 @@ git submodule add git@git.dev.tencent.com:hakutyou/api_script.git script
 git submodule init
 git submodule update
 #+END_SRC
+
+* Tester, Formatter, Linter
+** tox
+#+BEGIN_SRC bash
+tox
+#+END_SRC
+
+** Flake8
+#+BEGIN_SRC bash
+# hacking 新增 H 开头的错误类型
+pip install flake8 hacking pep8-naming
+#+END_SRC
+
+*** Pycharm 中的配置
+具体配置在 .flake8 中
+#+BEGIN_EXAMPLE
+File -> Settings -> External Tools -> Add ->
+Program: $PyInterpreterDirectory$/python
+Arguments: -m flake8 $ProjectFileDir$
+Working directory: $ProjectFileDir$
+#+END_EXAMPLE
+
